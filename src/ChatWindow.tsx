@@ -1,7 +1,8 @@
-import { Box, Typography, TextField, IconButton } from '@mui/material'
+import { Box, Typography, TextField, IconButton, CircularProgress } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 import { keyframes } from '@mui/system'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { chatApi, Role, type Message as ApiMessage } from './api/chatClient'
 
 const glowPulse = keyframes`
   0%, 100% {
@@ -26,29 +27,76 @@ interface Message {
   sender: 'user' | 'agent'
 }
 
-const testMessages: Message[] = [
-  { id: 1, text: "Hi there! How can I help you today?", sender: 'agent' },
-  { id: 2, text: "I'd like to know more about your services.", sender: 'user' },
-  { id: 3, text: "Of course! I'd be happy to tell you about what we offer.", sender: 'agent' },
-  { id: 4, text: "That sounds great, thanks!", sender: 'user' },
-  { id: 5, text: "Let me know if you have any specific questions.", sender: 'agent' },
-]
-
 function ChatWindow() {
-  const [messages, setMessages] = useState<Message[]>(testMessages)
+  const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const handleSend = () => {
-    if (inputText.trim() === '') return
+  // Auto-scroll to bottom when new messages arrive
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
-    const newMessage: Message = {
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  // Convert UI messages to API format
+  const convertToApiMessages = (): ApiMessage[] => {
+    return messages.map((msg) => ({
+      role: msg.sender === 'user' ? Role.User : Role.Assistant,
+      content: msg.text,
+    }))
+  }
+
+  const handleSend = async () => {
+    if (inputText.trim() === '' || isLoading) return
+
+    const userMessageText = inputText
+    const newUserMessage: Message = {
       id: messages.length + 1,
-      text: inputText,
+      text: userMessageText,
       sender: 'user',
     }
 
-    setMessages([...messages, newMessage])
+    // Add user message to UI
+    setMessages((prev) => [...prev, newUserMessage])
     setInputText('')
+    setIsLoading(true)
+
+    try {
+      // Get conversation history and send to API
+      const conversationHistory = convertToApiMessages()
+      const response = await chatApi.sendMessage(userMessageText, conversationHistory)
+
+      if (response) {
+        const agentMessage: Message = {
+          id: messages.length + 2,
+          text: response.content,
+          sender: 'agent',
+        }
+        setMessages((prev) => [...prev, agentMessage])
+      } else {
+        // Error handling - add error message
+        const errorMessage: Message = {
+          id: messages.length + 2,
+          text: 'Sorry, I encountered an error. Please try again.',
+          sender: 'agent',
+        }
+        setMessages((prev) => [...prev, errorMessage])
+      }
+    } catch (error) {
+      console.error('Error sending message:', error)
+      const errorMessage: Message = {
+        id: messages.length + 2,
+        text: 'Sorry, I encountered an error. Please try again.',
+        sender: 'agent',
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -130,6 +178,29 @@ function ChatWindow() {
             </Box>
           </Box>
         ))}
+        
+        {/* Loading indicator */}
+        {isLoading && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+            }}
+          >
+            <Box
+              sx={{
+                padding: 2,
+                borderRadius: '12px',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              }}
+            >
+              <CircularProgress size={20} sx={{ color: 'primary.main' }} />
+            </Box>
+          </Box>
+        )}
+        
+        {/* Auto-scroll anchor */}
+        <div ref={messagesEndRef} />
       </Box>
 
       {/* Floating Input Area with Frosted Glass */}
@@ -156,6 +227,7 @@ function ChatWindow() {
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           onKeyPress={handleKeyPress}
+          disabled={isLoading}
           sx={{
             '& .MuiOutlinedInput-root': {
               borderRadius: '12px',
@@ -175,10 +247,14 @@ function ChatWindow() {
         <IconButton
           color="primary"
           onClick={handleSend}
+          disabled={isLoading}
           sx={{
             backgroundColor: 'primary.main',
             '&:hover': {
               backgroundColor: 'primary.dark',
+            },
+            '&.Mui-disabled': {
+              backgroundColor: 'rgba(255, 255, 255, 0.12)',
             },
             width: 48,
             height: 48,
