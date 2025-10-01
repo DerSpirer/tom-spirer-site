@@ -28,7 +28,7 @@ export interface ServiceResultOfMessage {
 }
 
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const API_BASE_URL = 'https://tomspirersite-hfdyg9ayewadckby.swedencentral-01.azurewebsites.net'
 
 // API Client
 export class ChatApiClient {
