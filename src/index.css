@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: linear-gradient(
+    -45deg,
+    #050d17,
+    #08111c,
+    #0a0f1a,
+    #060e18,
+    #050d17
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 60s ease infinite;
+}
