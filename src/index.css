@@ -4,29 +4,109 @@
   box-sizing: border-box;
 }
 
-@keyframes gradientShift {
+@keyframes blob {
   0% {
-    background-position: 0% 50%;
+    transform: translate(0px, 0px) scale(1);
   }
-  50% {
-    background-position: 100% 50%;
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
   }
   100% {
-    background-position: 0% 50%;
+    transform: translate(0px, 0px) scale(1);
   }
 }
 
 body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
-  background: linear-gradient(
-    -45deg,
-    #050d17,
-    #08111c,
-    #0a0f1a,
-    #060e18,
-    #050d17
-  );
-  background-size: 400% 400%;
-  animation: gradientShift 60s ease infinite;
+  background: var(--color-slate, #0f172a); /* slate-900 - defined in theme.customColors.blobs.slate */
+  overflow: hidden;
+  position: relative;
+}
+
+body::before,
+body::after,
+#root::before {
+  content: '';
+  position: fixed;
+  border-radius: 9999px;
+  mix-blend-mode: multiply;
+  filter: blur(64px);
+  opacity: 0.7;
+  animation: blob 7s infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  top: -10%;
+  left: -10%;
+  width: 70rem;
+  height: 70rem;
+  background: var(--color-fuchsia, #4a0e4e); /* dark fuchsia - defined in theme.customColors.blobs.fuchsia */
+}
+
+body::after {
+  top: -10%;
+  right: -10%;
+  width: 70rem;
+  height: 70rem;
+  background: var(--color-pink, #4d0f29); /* dark pink - defined in theme.customColors.blobs.pink */
+  animation-delay: 2s;
+}
+
+#root::before {
+  bottom: -15%;
+  left: 50%;
+  width: 80rem;
+  height: 80rem;
+  transform: translateX(-50%);
+  background: var(--color-purple1, #3a1254); /* dark purple - defined in theme.customColors.blobs.purple1 */
+  animation-delay: 4s;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+.blob {
+  position: fixed;
+  border-radius: 9999px;
+  mix-blend-mode: multiply;
+  filter: blur(64px);
+  opacity: 0.7;
+  animation: blob 7s infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob-1 {
+  top: 20%;
+  right: 5%;
+  width: 65rem;
+  height: 65rem;
+  background: var(--color-rose, #520d23); /* dark rose - defined in theme.customColors.blobs.rose */
+  animation-delay: 3s;
+}
+
+.blob-2 {
+  bottom: 10%;
+  right: 15%;
+  width: 75rem;
+  height: 75rem;
+  background: var(--color-purple2, #3d1560); /* dark purple - defined in theme.customColors.blobs.purple2 */
+  animation-delay: 5s;
+}
+
+.blob-3 {
+  top: 50%;
+  left: 5%;
+  width: 60rem;
+  height: 60rem;
+  background: var(--color-magenta, #5a0d22); /* dark magenta - defined in theme.customColors.blobs.magenta */
+  animation-delay: 6s;
 }

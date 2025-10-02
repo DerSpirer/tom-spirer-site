@@ -1,37 +1,38 @@
-import { Box, Typography, TextField, IconButton, CircularProgress } from '@mui/material'
-import SendIcon from '@mui/icons-material/Send'
-import { keyframes } from '@mui/system'
+import { Box, useTheme } from '@mui/material'
 import { useState, useRef, useEffect } from 'react'
-import { chatApi, Role, type Message as ApiMessage } from './api/chatClient'
+import { chatApi } from './api/chatClient'
+import type { Message } from './types'
+import { createGlowPulse } from './utils/animations'
+import { convertToApiMessages, createUserMessage, createAgentMessage, createErrorMessage } from './utils/messageHelpers'
+import { useTypingAnimation } from './hooks/useTypingAnimation'
+import { useMessageId } from './hooks/useMessageId'
+import { CHAT_WINDOW } from './constants'
+import MessageBubble from './components/MessageBubble'
+import ChatInput from './components/ChatInput'
 
-const glowPulse = keyframes`
-  0%, 100% {
-    box-shadow: 
-      0 0 20px rgba(255, 255, 255, 0.15),
-      0 0 40px rgba(255, 255, 255, 0.1),
-      0 0 60px rgba(255, 255, 255, 0.05),
-      0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow: 
-      0 0 30px rgba(255, 255, 255, 0.25),
-      0 0 50px rgba(255, 255, 255, 0.18),
-      0 0 80px rgba(255, 255, 255, 0.12),
-      0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-`
-
-interface Message {
-  id: number
-  text: string
-  sender: 'user' | 'agent'
+interface ChatWindowProps {
+  suggestionText?: string
+  onSuggestionUsed?: () => void
 }
 
-function ChatWindow() {
+function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
+  const theme = useTheme()
+  const glowPulse = createGlowPulse(theme.glow.rgb)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  
+  // Use typing animation hook for suggestion text
+  const { isTyping } = useTypingAnimation({
+    text: suggestionText || '',
+    onTextChange: setInputText,
+    onComplete: onSuggestionUsed,
+  })
+
+  // Generate unique message IDs
+  const getNextMessageId = useMessageId()
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -42,23 +43,21 @@ function ChatWindow() {
     scrollToBottom()
   }, [messages])
 
-  // Convert UI messages to API format
-  const convertToApiMessages = (): ApiMessage[] => {
-    return messages.map((msg) => ({
-      role: msg.sender === 'user' ? Role.User : Role.Assistant,
-      content: msg.text,
-    }))
-  }
+  // Focus input field when typing animation completes
+  useEffect(() => {
+    if (!isTyping && inputText) {
+      // Small delay to ensure the field is no longer disabled
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 10)
+    }
+  }, [isTyping, inputText])
 
   const handleSend = async () => {
-    if (inputText.trim() === '' || isLoading) return
+    if (inputText.trim() === '' || isLoading || isTyping) return
 
     const userMessageText = inputText
-    const newUserMessage: Message = {
-      id: messages.length + 1,
-      text: userMessageText,
-      sender: 'user',
-    }
+    const newUserMessage = createUserMessage(userMessageText, getNextMessageId())
 
     // Add user message to UI
     setMessages((prev) => [...prev, newUserMessage])
@@ -67,32 +66,19 @@ function ChatWindow() {
 
     try {
       // Get conversation history and send to API
-      const conversationHistory = convertToApiMessages()
+      const conversationHistory = convertToApiMessages(messages)
       const response = await chatApi.sendMessage(userMessageText, conversationHistory)
 
       if (response) {
-        const agentMessage: Message = {
-          id: messages.length + 2,
-          text: response.content,
-          sender: 'agent',
-        }
+        const agentMessage = createAgentMessage(response.content, getNextMessageId())
         setMessages((prev) => [...prev, agentMessage])
       } else {
-        // Error handling - add error message
-        const errorMessage: Message = {
-          id: messages.length + 2,
-          text: 'Sorry, I encountered an error. Please try again.',
-          sender: 'agent',
-        }
+        const errorMessage = createErrorMessage(getNextMessageId())
         setMessages((prev) => [...prev, errorMessage])
       }
     } catch (error) {
       console.error('Error sending message:', error)
-      const errorMessage: Message = {
-        id: messages.length + 2,
-        text: 'Sorry, I encountered an error. Please try again.',
-        sender: 'agent',
-      }
+      const errorMessage = createErrorMessage(getNextMessageId())
       setMessages((prev) => [...prev, errorMessage])
     } finally {
       setIsLoading(false)
@@ -108,13 +94,16 @@ function ChatWindow() {
 
   return (
     <Box
+      component="main"
+      role="region"
+      aria-label="Chat interface"
       sx={{
         width: '100%',
-        maxWidth: '400px',
-        height: '600px',
+        maxWidth: CHAT_WINDOW.MAX_WIDTH,
+        height: CHAT_WINDOW.HEIGHT,
         backgroundColor: 'background.paper',
-        borderRadius: '24px',
-        border: '1px solid rgba(255, 255, 255, 0.15)',
+        borderRadius: CHAT_WINDOW.BORDER_RADIUS,
+        border: (theme) => `1px solid ${theme.customColors.borders.light}`,
         padding: 3,
         display: 'flex',
         flexDirection: 'column',
@@ -123,8 +112,11 @@ function ChatWindow() {
         animation: `${glowPulse} 8s ease-in-out infinite`,
       }}
     >
-      {/* Messages Container - Full Height */}
+      {/* Messages Container */}
       <Box
+        role="log"
+        aria-label="Chat messages"
+        aria-live="polite"
         sx={{
           position: 'absolute',
           top: 0,
@@ -136,136 +128,43 @@ function ChatWindow() {
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
-          paddingBottom: '100px', // Space for input at bottom
+          paddingBottom: CHAT_WINDOW.INPUT_HEIGHT,
           '&::-webkit-scrollbar': {
             width: '8px',
           },
           '&::-webkit-scrollbar-track': {
-            background: 'rgba(255, 255, 255, 0.03)',
+            background: (theme) => theme.customColors.overlays.white05,
             borderRadius: '4px',
           },
           '&::-webkit-scrollbar-thumb': {
-            background: 'rgba(255, 255, 255, 0.15)',
+            background: (theme) => theme.customColors.borders.light,
             borderRadius: '4px',
             '&:hover': {
-              background: 'rgba(255, 255, 255, 0.25)',
+              background: (theme) => theme.customColors.overlays.white25,
             },
           },
         }}
       >
         {messages.map((message) => (
-          <Box
-            key={message.id}
-            sx={{
-              display: 'flex',
-              justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
-            }}
-          >
-            <Box
-              sx={{
-                maxWidth: '70%',
-                padding: 2,
-                borderRadius: '12px',
-                backgroundColor: message.sender === 'user' 
-                  ? 'primary.main'
-                  : 'rgba(255, 255, 255, 0.05)',
-                color: 'text.primary',
-              }}
-            >
-              <Typography variant="body1">
-                {message.text}
-              </Typography>
-            </Box>
-          </Box>
+          <MessageBubble key={message.id} message={message} />
         ))}
-        
-        {/* Loading indicator */}
-        {isLoading && (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-            }}
-          >
-            <Box
-              sx={{
-                padding: 2,
-                borderRadius: '12px',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              }}
-            >
-              <CircularProgress size={20} sx={{ color: 'primary.main' }} />
-            </Box>
-          </Box>
-        )}
         
         {/* Auto-scroll anchor */}
         <div ref={messagesEndRef} />
       </Box>
 
-      {/* Floating Input Area with Frosted Glass */}
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          display: 'flex',
-          gap: 1,
-          alignItems: 'center',
-          padding: 2,
-          borderRadius: '0 0 24px 24px',
-          backgroundColor: 'rgba(26, 35, 50, 0.7)',
-          backdropFilter: 'blur(12px)',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-        }}
-      >
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Type a message..."
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyPress={handleKeyPress}
-          disabled={isLoading}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '12px',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              '& fieldset': {
-                border: 'none',
-              },
-              '&:hover fieldset': {
-                border: 'none',
-              },
-              '&.Mui-focused fieldset': {
-                border: 'none',
-              },
-            }
-          }}
-        />
-        <IconButton
-          color="primary"
-          onClick={handleSend}
-          disabled={isLoading}
-          sx={{
-            backgroundColor: 'primary.main',
-            '&:hover': {
-              backgroundColor: 'primary.dark',
-            },
-            '&.Mui-disabled': {
-              backgroundColor: 'rgba(255, 255, 255, 0.12)',
-            },
-            width: 48,
-            height: 48,
-          }}
-        >
-          <SendIcon sx={{ color: 'white' }} />
-        </IconButton>
-      </Box>
+      {/* Floating Input Area */}
+      <ChatInput
+        inputText={inputText}
+        isLoading={isLoading}
+        isTyping={isTyping}
+        inputRef={inputRef}
+        onInputChange={setInputText}
+        onSend={handleSend}
+        onKeyPress={handleKeyPress}
+      />
     </Box>
   )
 }
 
 export default ChatWindow
-

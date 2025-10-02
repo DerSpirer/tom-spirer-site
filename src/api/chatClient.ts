@@ -1,4 +1,5 @@
 import axios, { type AxiosInstance, AxiosError } from 'axios'
+import { API } from '../constants'
 
 // API Types based on OpenAPI spec
 
@@ -27,14 +28,11 @@ export interface ServiceResultOfMessage {
   data: Message | null
 }
 
-// API Configuration
-const API_BASE_URL = 'https://tomspirersite-hfdyg9ayewadckby.swedencentral-01.azurewebsites.net'
-
 // API Client
 export class ChatApiClient {
   private axiosInstance: AxiosInstance
 
-  constructor(baseUrl: string = API_BASE_URL) {
+  constructor(baseUrl: string = API.BASE_URL) {
     this.axiosInstance = axios.create({
       baseURL: baseUrl,
       headers: {
@@ -55,7 +53,7 @@ export class ChatApiClient {
 
     try {
       const response = await this.axiosInstance.post<ServiceResultOfMessage>(
-        '/api/Chat/GenerateResponse',
+        API.ENDPOINTS.GENERATE_RESPONSE,
         request
       )
 
@@ -109,4 +107,3 @@ export class ChatApiClient {
 
 // Export a default instance
 export const chatApi = new ChatApiClient()
-
