@@ -75,7 +75,14 @@ export class ChatApiClient {
               if (line.startsWith('data: ')) {
                 const data = line.slice(6) // Remove 'data: ' prefix
                 if (data) {
-                  onChunk(data)
+                  try {
+                    const parsed = JSON.parse(data)
+                    if (parsed.delta) {
+                      onChunk(parsed.delta)
+                    }
+                  } catch (e) {
+                    console.error('Failed to parse SSE data as JSON:', data, e)
+                  }
                 }
               }
             }
@@ -88,7 +95,14 @@ export class ChatApiClient {
         if (buffer.startsWith('data: ')) {
           const data = buffer.slice(6)
           if (data) {
-            onChunk(data)
+            try {
+              const parsed = JSON.parse(data)
+              if (parsed.delta) {
+                onChunk(parsed.delta)
+              }
+            } catch (e) {
+              console.error('Failed to parse SSE data as JSON:', data, e)
+            }
           }
         }
       }
