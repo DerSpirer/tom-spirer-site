@@ -6,7 +6,7 @@ export const getMarkdownStyles = (sender: 'user' | 'agent'): SxProps<Theme> => (
   borderRadius: '12px',
   backgroundColor: sender === 'user' 
     ? 'primary.main'
-    : (theme) => theme.customColors.overlays.white05,
+    : (theme) => theme.customColors.components.agentMessage,
   color: 'text.primary',
   '& p': {
     margin: 0,

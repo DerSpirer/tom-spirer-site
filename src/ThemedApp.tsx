@@ -5,21 +5,18 @@ import CssBaseline from '@mui/material/CssBaseline'
 import App from './App'
 import { createAppTheme } from './theme'
 import ThemeToggle from './components/ThemeToggle'
+import GithubMenu from './components/GithubMenu'
 
-// Local storage key for theme preference
 const THEME_STORAGE_KEY = 'app-theme-mode'
 
-// Get initial theme mode from localStorage or system preference
 const getInitialThemeMode = (): PaletteMode => {
   const stored = localStorage.getItem(THEME_STORAGE_KEY)
   if (stored === 'light' || stored === 'dark') {
     return stored
   }
-  // Default to dark mode
   return 'dark'
 }
 
-// Inject theme colors as CSS custom properties for use in index.css
 const injectThemeColors = (theme: Theme) => {
   const root = document.documentElement
   root.style.setProperty('--color-slate', theme.customColors.blobs.slate)
@@ -31,19 +28,14 @@ const injectThemeColors = (theme: Theme) => {
   root.style.setProperty('--color-magenta', theme.customColors.blobs.magenta)
 }
 
-// Main app component with theme state management
 function ThemedApp() {
   const [mode, setMode] = useState<PaletteMode>(getInitialThemeMode)
-
-  // Create theme based on current mode
   const theme = useMemo(() => createAppTheme(mode), [mode])
 
-  // Inject CSS custom properties when theme changes
   useEffect(() => {
     injectThemeColors(theme)
   }, [theme])
 
-  // Load appropriate syntax highlighting theme based on mode
   useEffect(() => {
     const isDark = mode === 'dark'
     const existingLink = document.getElementById('highlight-theme')
@@ -65,7 +57,6 @@ function ThemedApp() {
     }
   }, [mode])
 
-  // Toggle between light and dark mode
   const toggleTheme = () => {
     setMode((prevMode) => {
       const newMode = prevMode === 'light' ? 'dark' : 'light'
@@ -77,6 +68,7 @@ function ThemedApp() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <GithubMenu />
       <ThemeToggle onToggle={toggleTheme} />
       <App />
     </ThemeProvider>
@@ -84,4 +76,3 @@ function ThemedApp() {
 }
 
 export default ThemedApp
-

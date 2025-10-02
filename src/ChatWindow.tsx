@@ -21,11 +21,8 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  // Generate unique message IDs
   const getNextMessageId = useMessageId()
 
-  // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
@@ -34,12 +31,10 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
     scrollToBottom()
   }, [messages, scrollToBottom])
 
-  // Handle suggestion text - directly set it without animation
   useEffect(() => {
     if (suggestionText) {
       setInputText(suggestionText)
       onSuggestionUsed?.()
-      // Focus input field
       setTimeout(() => {
         inputRef.current?.focus()
       }, 10)
@@ -49,7 +44,6 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
   const handleSend = useCallback(async () => {
     if (inputText.trim() === '' || isLoading) return
 
-    // Trigger chat start on first message
     if (!hasChatStarted) {
       onChatStart?.()
     }
@@ -57,18 +51,15 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
     const userMessageText = inputText
     const newUserMessage = createUserMessage(userMessageText, getNextMessageId())
 
-    // Add user message to UI
     setMessages((prev) => [...prev, newUserMessage])
     setInputText('')
     setIsLoading(true)
 
-    // Create a placeholder agent message for streaming
     const agentMessageId = getNextMessageId()
     const placeholderMessage = createAgentMessage('', agentMessageId)
     setMessages((prev) => [...prev, placeholderMessage])
 
     try {
-      // Get conversation history and send to API with streaming
       const conversationHistory = convertToApiMessages(messages)
       const apiMessages = [
         ...conversationHistory,
@@ -79,7 +70,6 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
 
       await chatApi.generateResponseStream(apiMessages, (chunk: string) => {
         accumulatedText += chunk
-        // Update the placeholder message with accumulated text
         setMessages((prev) =>
           prev.map((msg) =>
             msg.id === agentMessageId
@@ -90,7 +80,6 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
       })
     } catch (error) {
       console.error('Error sending message:', error)
-      // Remove placeholder message and add error message
       setMessages((prev) => {
         const filtered = prev.filter((msg) => msg.id !== agentMessageId)
         const errorMessage = createErrorMessage(getNextMessageId())
@@ -101,7 +90,7 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
     }
   }, [inputText, isLoading, messages, getNextMessageId, hasChatStarted, onChatStart])
 
-  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
@@ -117,9 +106,13 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
         width: '100%',
         maxWidth: CHAT_WINDOW.MAX_WIDTH,
         height: hasChatStarted ? CHAT_WINDOW.HEIGHT : CHAT_WINDOW.INPUT_HEIGHT,
-        backgroundColor: (theme) => theme.palette.background.paper,
+        backgroundColor: (theme) => theme.palette.background.default,
         borderRadius: CHAT_WINDOW.BORDER_RADIUS,
         border: (theme) => `1px solid ${theme.customColors.borders.light}`,
+        boxShadow: (theme) => 
+          theme.palette.mode === 'dark'
+            ? `0 0 20px rgba(255, 255, 255, 0.08)`
+            : `0 4px 12px rgba(0, 0, 0, 0.08)`,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: hasChatStarted ? 'flex-start' : 'center',
@@ -173,12 +166,9 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
-        
-        {/* Auto-scroll anchor */}
         <div ref={messagesEndRef} />
       </Box>
 
-      {/* Input Area */}
       <Box
         sx={{
           position: hasChatStarted ? 'absolute' : 'relative',
@@ -194,7 +184,7 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
           inputRef={inputRef}
           onInputChange={setInputText}
           onSend={handleSend}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
         />
       </Box>
     </Box>

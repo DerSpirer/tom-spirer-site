@@ -3,10 +3,6 @@ import { BUBBLE } from '../constants'
 
 const { LEFT_NEAR, LEFT_FAR, RIGHT_NEAR, RIGHT_FAR } = BUBBLE.POSITIONS
 
-/**
- * Configuration for prompt suggestion bubbles
- * Note: Float animations are defined in index.css using CSS keyframes
- */
 export const bubbleConfigs: BubbleConfig[] = [
   {
     id: 1,

@@ -8,7 +8,7 @@ interface ChatInputProps {
   inputRef: RefObject<HTMLInputElement | null>
   onInputChange: (value: string) => void
   onSend: () => void
-  onKeyPress: (e: React.KeyboardEvent) => void
+  onKeyDown: (e: React.KeyboardEvent) => void
 }
 
 function ChatInput({ 
@@ -17,7 +17,7 @@ function ChatInput({
   inputRef,
   onInputChange, 
   onSend, 
-  onKeyPress
+  onKeyDown
 }: ChatInputProps) {
   const theme = useTheme()
   
@@ -29,7 +29,7 @@ function ChatInput({
         alignItems: 'center',
         padding: 2,
         borderRadius: '12px',
-        backgroundColor: theme.customColors.overlays.paperDark,
+        backgroundColor: theme.palette.background.default,
         backdropFilter: 'blur(12px)',
         flexShrink: 0,
       }}
@@ -40,11 +40,13 @@ function ChatInput({
         placeholder="ask me anything"
         value={inputText}
         onChange={(e) => onInputChange(e.target.value)}
-        onKeyPress={onKeyPress}
+        onKeyDown={onKeyDown}
         disabled={isLoading}
         inputRef={inputRef}
-        inputProps={{
-          'aria-label': 'Chat message input',
+        slotProps={{
+          htmlInput: {
+            'aria-label': 'Chat message input',
+          },
         }}
         sx={{
           '& .MuiOutlinedInput-root': {
@@ -59,21 +61,20 @@ function ChatInput({
             '&.Mui-focused fieldset': {
               border: 'none',
             },
-            '&.Mui-disabled': {
-              '& input': {
-                color: 'white',
-                WebkitTextFillColor: 'white',
-              },
+          '&.Mui-disabled': {
+            '& input': {
+              color: (theme) => theme.palette.text.primary,
+              WebkitTextFillColor: (theme) => theme.palette.text.primary,
             },
           },
-          '& .MuiInputBase-input.Mui-disabled': {
-            color: 'white',
-            WebkitTextFillColor: 'white',
-          },
+        },
+        '& .MuiInputBase-input.Mui-disabled': {
+          color: (theme) => theme.palette.text.primary,
+          WebkitTextFillColor: (theme) => theme.palette.text.primary,
+        },
         }}
       />
       <IconButton
-        color="primary"
         onClick={onSend}
         disabled={isLoading}
         aria-label={isLoading ? 'Sending message' : 'Send message'}

@@ -7,7 +7,6 @@ interface PromptSuggestionBubblesProps {
   onBubbleClick?: (text: string) => void
 }
 
-// Parse chat window height once outside component
 const CHAT_WINDOW_HEIGHT = parseInt(CHAT_WINDOW.HEIGHT)
 
 function PromptSuggestionBubbles({ onBubbleClick }: PromptSuggestionBubblesProps) {
@@ -16,7 +15,6 @@ function PromptSuggestionBubbles({ onBubbleClick }: PromptSuggestionBubblesProps
   return (
     <>
       {bubbleConfigs.map((config) => {
-        // Calculate Y position offset for base transform
         const yOffset = calculateYOffset(config.basePosition.y, CHAT_WINDOW_HEIGHT)
 
         return (
@@ -25,9 +23,8 @@ function PromptSuggestionBubbles({ onBubbleClick }: PromptSuggestionBubblesProps
             sx={{
               position: 'fixed',
               left: '50%',
-              top: '50%',
+              top: 'calc(50% + 80px)',
               transform: `translate(calc(-50% + ${config.basePosition.x}px), calc(-50% + ${yOffset}px))`,
-              // Hide on smaller screens to avoid clutter
               [`@media (max-width: ${BREAKPOINTS.HIDE_BUBBLES}px)`]: {
                 display: 'none',
               },
@@ -39,7 +36,7 @@ function PromptSuggestionBubbles({ onBubbleClick }: PromptSuggestionBubblesProps
               role="button"
               tabIndex={0}
               aria-label={`Prompt suggestion: ${config.text}`}
-              onKeyPress={(e) => {
+              onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
                   onBubbleClick?.(config.text)
@@ -48,19 +45,20 @@ function PromptSuggestionBubbles({ onBubbleClick }: PromptSuggestionBubblesProps
               sx={{
                 width: `${BUBBLE.WIDTH}px`,
                 padding: 2.5,
-                backgroundColor: theme.customColors.overlays.paper,
-                backdropFilter: 'blur(10px)',
+                backgroundColor: theme.customColors.components.suggestionBubble,
                 borderRadius: '16px',
                 border: `1px solid rgba(${theme.glow.rgb}, 0.2)`,
                 cursor: 'pointer',
                 transition: 'box-shadow 0.3s ease, scale 0.2s ease',
                 '&:hover': {
-                  backgroundColor: theme.customColors.overlays.paperDark,
-                  boxShadow: `
-                    0 0 25px rgba(${theme.glow.rgb}, 0.3),
-                    0 0 50px rgba(${theme.glow.rgb}, 0.15),
-                    0 4px 15px ${theme.customColors.overlays.black30}
-                  `,
+                  backgroundColor: theme.customColors.components.suggestionBubbleHover,
+                  boxShadow: theme.palette.mode === 'dark'
+                    ? `0 0 30px rgba(255, 255, 255, 0.12),
+                       0 0 50px rgba(255, 255, 255, 0.06),
+                       0 4px 15px ${theme.customColors.overlays.black30}`
+                    : `0 6px 25px rgba(0, 0, 0, 0.1),
+                       0 3px 12px rgba(0, 0, 0, 0.08),
+                       0 2px 6px rgba(0, 0, 0, 0.06)`,
                   scale: '1.05',
                 },
               }}

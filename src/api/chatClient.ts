@@ -1,8 +1,6 @@
 import axios, { type AxiosInstance } from 'axios'
 import { API } from '../constants'
 
-// API Types based on OpenAPI spec
-
 export const Role = {
   System: 'system',
   User: 'user',
@@ -11,10 +9,10 @@ export const Role = {
   Developer: 'developer',
 } as const
 
-export type Role = (typeof Role)[keyof typeof Role]
+export type RoleType = (typeof Role)[keyof typeof Role]
 
 export interface ApiMessage {
-  role: Role
+  role: RoleType
   content: string
 }
 
@@ -22,7 +20,6 @@ export interface GenerateResponseRequest {
   messages: ApiMessage[]
 }
 
-// API Client
 export class ChatApiClient {
   private axiosInstance: AxiosInstance
 
@@ -102,5 +99,4 @@ export class ChatApiClient {
   }
 }
 
-// Export a default instance
 export const chatApi = new ChatApiClient()

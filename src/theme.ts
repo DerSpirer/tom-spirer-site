@@ -1,101 +1,106 @@
-import { createTheme } from '@mui/material/styles';
-import type { PaletteMode } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles'
+import type { PaletteMode } from '@mui/material/styles'
 
-// Extend the theme type to include custom properties
 declare module '@mui/material/styles' {
   interface Theme {
     glow: {
-      color: string;
-      rgb: string; // RGB values for use in rgba()
-    };
+      color: string
+      rgb: string
+    }
     customColors: {
-      // Blob background colors
       blobs: {
-        fuchsia: string;
-        pink: string;
-        purple1: string;
-        purple2: string;
-        rose: string;
-        magenta: string;
-        slate: string;
-      };
-      // Semi-transparent overlays
+        fuchsia: string
+        pink: string
+        purple1: string
+        purple2: string
+        rose: string
+        magenta: string
+        slate: string
+      }
       overlays: {
-        paper: string;
-        paperDark: string;
-        white05: string;
-        white10: string;
-        white12: string;
-        white15: string;
-        white20: string;
-        white25: string;
-        white30: string;
-        white85: string;
-        black30: string;
-        black40: string;
-      };
-      // Border colors
+        paper: string
+        paperDark: string
+        white05: string
+        white10: string
+        white12: string
+        white15: string
+        white20: string
+        white25: string
+        white30: string
+        white85: string
+        black30: string
+        black40: string
+      }
       borders: {
-        subtle: string;
-        light: string;
-        medium: string;
-      };
-    };
+        subtle: string
+        light: string
+        medium: string
+      }
+      components: {
+        suggestionBubble: string
+        suggestionBubbleHover: string
+        agentMessage: string
+      }
+    }
   }
   interface ThemeOptions {
     glow?: {
-      color?: string;
-      rgb?: string;
-    };
+      color?: string
+      rgb?: string
+    }
     customColors?: {
       blobs?: {
-        fuchsia?: string;
-        pink?: string;
-        purple1?: string;
-        purple2?: string;
-        rose?: string;
-        magenta?: string;
-        slate?: string;
-      };
+        fuchsia?: string
+        pink?: string
+        purple1?: string
+        purple2?: string
+        rose?: string
+        magenta?: string
+        slate?: string
+      }
       overlays?: {
-        paper?: string;
-        paperDark?: string;
-        white05?: string;
-        white10?: string;
-        white12?: string;
-        white15?: string;
-        white20?: string;
-        white25?: string;
-        white30?: string;
-        white85?: string;
-        black30?: string;
-        black40?: string;
-      };
+        paper?: string
+        paperDark?: string
+        white05?: string
+        white10?: string
+        white12?: string
+        white15?: string
+        white20?: string
+        white25?: string
+        white30?: string
+        white85?: string
+        black30?: string
+        black40?: string
+      }
       borders?: {
-        subtle?: string;
-        light?: string;
-        medium?: string;
-      };
-    };
+        subtle?: string
+        light?: string
+        medium?: string
+      }
+      components?: {
+        suggestionBubble?: string
+        suggestionBubbleHover?: string
+        agentMessage?: string
+      }
+    }
   }
 }
 
-// Create a custom theme based on mode
 export const createAppTheme = (mode: PaletteMode) => {
-  const isDark = mode === 'dark';
+  const isDark = mode === 'dark'
   
   return createTheme({
     palette: {
       mode,
       primary: {
-        main: isDark ? '#4a9eff' : '#5b8ee0', // Bright blue for dark, softer blue for light
+        main: isDark ? '#4a9eff' : '#5b8ee0',
       },
       secondary: {
-        main: isDark ? '#dc004e' : '#db2777', // Rose/pink
+        main: isDark ? '#dc004e' : '#db2777',
       },
       background: {
-        default: isDark ? '#0f0e1a' : '#eff1f5', // Deep purple-blue or soft light gray
-        paper: isDark ? '#1a1825' : '#f5f3f0', // Rich purple-tinted dark or warm off-white
+        default: isDark ? '#0f0e1a' : '#f8f9fb',
+        paper: isDark ? '#1a1825' : '#f5f3f0',
       },
       text: {
         primary: isDark ? '#ffffff' : '#0f172a',
@@ -113,29 +118,27 @@ export const createAppTheme = (mode: PaletteMode) => {
       ].join(','),
     },
     glow: {
-      color: isDark ? '#4a9eff' : '#5b8ee0',
-      rgb: isDark ? '74, 158, 255' : '91, 142, 224',
+      color: isDark ? '#a78bfa' : '#9333ea',
+      rgb: isDark ? '167, 139, 250' : '147, 51, 234',
     },
     customColors: {
-      // Background blob colors for animated background elements
       blobs: isDark ? {
-        fuchsia: '#2d1b47',
-        pink: '#3d1f47',
-        purple1: '#2a1f4a',
-        purple2: '#331d52',
-        rose: '#3d1d3f',
-        magenta: '#401d42',
-        slate: '#0f0e1a',
+        fuchsia: '#1a0f2a',
+        pink: '#1f131f',
+        purple1: '#15112a',
+        purple2: '#1b1530',
+        rose: '#1f1220',
+        magenta: '#21132a',
+        slate: '#0a0812',
       } : {
-        fuchsia: '#f5d0fe',
+        fuchsia: '#fae8ff',
         pink: '#fce7f3',
         purple1: '#f3e8ff',
         purple2: '#ede9fe',
         rose: '#ffe4e6',
-        magenta: '#fecaca',
-        slate: '#e2e8f0',
+        magenta: '#fecdd3',
+        slate: '#f1f5f9',
       },
-      // Semi-transparent overlay colors
       overlays: isDark ? {
         paper: 'rgba(26, 24, 37, 0.7)',
         paperDark: 'rgba(26, 24, 37, 0.85)',
@@ -150,9 +153,9 @@ export const createAppTheme = (mode: PaletteMode) => {
         black30: 'rgba(0, 0, 0, 0.3)',
         black40: 'rgba(0, 0, 0, 0.4)',
       } : {
-        paper: 'rgba(245, 243, 240, 0.85)',
-        paperDark: 'rgba(241, 237, 233, 0.95)',
-        white05: 'rgba(0, 0, 0, 0.02)',
+        paper: 'rgba(252, 251, 250, 0.85)',
+        paperDark: 'rgba(252, 251, 250, 0.95)',
+        white05: 'rgba(0, 0, 0, 0.04)',
         white10: 'rgba(0, 0, 0, 0.05)',
         white12: 'rgba(0, 0, 0, 0.06)',
         white15: 'rgba(0, 0, 0, 0.08)',
@@ -163,7 +166,6 @@ export const createAppTheme = (mode: PaletteMode) => {
         black30: 'rgba(255, 255, 255, 0.5)',
         black40: 'rgba(255, 255, 255, 0.65)',
       },
-      // Border colors
       borders: isDark ? {
         subtle: 'rgba(255, 255, 255, 0.1)',
         light: 'rgba(255, 255, 255, 0.15)',
@@ -173,10 +175,18 @@ export const createAppTheme = (mode: PaletteMode) => {
         light: 'rgba(0, 0, 0, 0.12)',
         medium: 'rgba(0, 0, 0, 0.16)',
       },
+      components: isDark ? {
+        suggestionBubble: 'rgba(26, 24, 37, 0.7)',
+        suggestionBubbleHover: 'rgba(26, 24, 37, 0.85)',
+        agentMessage: 'rgba(255, 255, 255, 0.08)',
+      } : {
+        suggestionBubble: '#f8f9fb',
+        suggestionBubbleHover: '#f8f9fb',
+        agentMessage: 'rgba(147, 51, 234, 0.06)',
+      },
     },
-  });
-};
+  })
+}
 
-// Default export for backwards compatibility
-const theme = createAppTheme('dark');
-export default theme;
+const theme = createAppTheme('dark')
+export default theme
