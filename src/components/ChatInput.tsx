@@ -37,7 +37,7 @@ function ChatInput({
       <TextField
         fullWidth
         variant="outlined"
-        placeholder="ask me anything"
+        placeholder="Ask me anything..."
         value={inputText}
         onChange={(e) => onInputChange(e.target.value)}
         onKeyDown={onKeyDown}

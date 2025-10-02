@@ -20,6 +20,8 @@ body {
   );
   background-size: 400% 400%;
   animation: gradient-shift 15s ease infinite;
+  height: 100vh;
+  overflow: hidden;
 }
 
 @keyframes gradient-shift {
@@ -37,6 +39,8 @@ body {
 #root {
   position: relative;
   z-index: 1;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Register CSS custom properties for smooth animation interpolation */

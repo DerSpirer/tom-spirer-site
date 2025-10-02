@@ -6,9 +6,11 @@ import PromptSuggestionBubbles from './PromptSuggestionBubbles'
 function App() {
   const [suggestionText, setSuggestionText] = useState<string>('')
   const [hasChatStarted, setHasChatStarted] = useState(false)
+  const [showBubbles, setShowBubbles] = useState(true)
 
   const handleBubbleClick = useCallback((text: string) => {
     setSuggestionText(text)
+    setShowBubbles(false)
   }, [])
 
   const handleSuggestionUsed = useCallback(() => {
@@ -19,17 +21,22 @@ function App() {
     setHasChatStarted(true)
   }, [])
 
+  const handleInputEmpty = useCallback(() => {
+    setShowBubbles(true)
+  }, [])
+
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ height: '100vh', overflow: 'hidden' }}>
       <Box 
         sx={{ 
-          minHeight: '100vh',
+          height: '100%',
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center',
           justifyContent: 'center',
           gap: hasChatStarted ? 2 : 4,
           transition: 'gap 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+          py: 2,
         }}
       >
         <Box
@@ -39,6 +46,7 @@ function App() {
             alignItems: 'center',
             gap: hasChatStarted ? 0.5 : 1.5,
             transition: 'gap 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+            flexShrink: 0,
           }}
         >
           <Typography
@@ -104,12 +112,16 @@ function App() {
           onSuggestionUsed={handleSuggestionUsed}
           onChatStart={handleChatStart}
           hasChatStarted={hasChatStarted}
+          showBubbles={showBubbles}
+          onInputEmpty={handleInputEmpty}
+          onBubbleClick={handleBubbleClick}
         />
       </Box>
       {hasChatStarted && (
         <Box
           sx={{
             animation: 'fadeIn 1s ease 0.9s both',
+            flexShrink: 0,
             '@keyframes fadeIn': {
               from: {
                 opacity: 0,
@@ -120,7 +132,7 @@ function App() {
             },
           }}
         >
-          <PromptSuggestionBubbles onBubbleClick={handleBubbleClick} />
+          <PromptSuggestionBubbles onBubbleClick={handleBubbleClick} showBubbles={showBubbles} />
         </Box>
       )}
     </Container>

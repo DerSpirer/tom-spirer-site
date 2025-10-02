@@ -5,11 +5,12 @@ import { BREAKPOINTS, CHAT_WINDOW, BUBBLE } from './constants'
 
 interface PromptSuggestionBubblesProps {
   onBubbleClick?: (text: string) => void
+  showBubbles: boolean
 }
 
 const CHAT_WINDOW_HEIGHT = parseInt(CHAT_WINDOW.HEIGHT)
 
-function PromptSuggestionBubbles({ onBubbleClick }: PromptSuggestionBubblesProps) {
+function PromptSuggestionBubbles({ onBubbleClick, showBubbles }: PromptSuggestionBubblesProps) {
   const theme = useTheme()
 
   return (
@@ -25,6 +26,9 @@ function PromptSuggestionBubbles({ onBubbleClick }: PromptSuggestionBubblesProps
               left: '50%',
               top: 'calc(50% + 80px)',
               transform: `translate(calc(-50% + ${config.basePosition.x}px), calc(-50% + ${yOffset}px))`,
+              opacity: showBubbles ? 1 : 0,
+              pointerEvents: showBubbles ? 'auto' : 'none',
+              transition: 'opacity 0.3s ease',
               [`@media (max-width: ${BREAKPOINTS.HIDE_BUBBLES}px)`]: {
                 display: 'none',
               },

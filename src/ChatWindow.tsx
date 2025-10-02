@@ -1,10 +1,11 @@
-import { Box } from '@mui/material'
+import { Box, Chip, useMediaQuery, useTheme } from '@mui/material'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { chatApi } from './api/chatClient'
 import type { Message } from './types'
 import { convertToApiMessages, createUserMessage, createAgentMessage, createErrorMessage } from './utils/messageHelpers'
 import { useMessageId } from './hooks/useMessageId'
-import { CHAT_WINDOW } from './constants'
+import { CHAT_WINDOW, BREAKPOINTS } from './constants'
+import { bubbleConfigs } from './config/bubbleConfigs'
 import MessageBubble from './components/MessageBubble'
 import ChatInput from './components/ChatInput'
 
@@ -13,15 +14,20 @@ interface ChatWindowProps {
   onSuggestionUsed?: () => void
   onChatStart?: () => void
   hasChatStarted: boolean
+  showBubbles: boolean
+  onInputEmpty?: () => void
+  onBubbleClick?: (text: string) => void
 }
 
-function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStarted }: ChatWindowProps) {
+function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStarted, showBubbles, onInputEmpty, onBubbleClick }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const getNextMessageId = useMessageId()
+  const theme = useTheme()
+  const showChips = useMediaQuery(`(max-width: ${BREAKPOINTS.HIDE_BUBBLES}px)`)
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -40,6 +46,12 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
       }, 10)
     }
   }, [suggestionText, onSuggestionUsed])
+
+  useEffect(() => {
+    if (inputText === '' && hasChatStarted) {
+      onInputEmpty?.()
+    }
+  }, [inputText, hasChatStarted, onInputEmpty])
 
   const handleSend = useCallback(async () => {
     if (inputText.trim() === '' || isLoading) return
@@ -97,6 +109,10 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
     }
   }, [handleSend])
 
+  const handleChipClick = useCallback((text: string) => {
+    onBubbleClick?.(text)
+  }, [onBubbleClick])
+
   return (
     <Box
       component="main"
@@ -105,7 +121,8 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
       sx={{
         width: '100%',
         maxWidth: CHAT_WINDOW.MAX_WIDTH,
-        height: hasChatStarted ? CHAT_WINDOW.HEIGHT : CHAT_WINDOW.INPUT_HEIGHT,
+        height: hasChatStarted ? '100%' : CHAT_WINDOW.INPUT_HEIGHT,
+        maxHeight: hasChatStarted ? '650px' : CHAT_WINDOW.INPUT_HEIGHT,
         backgroundColor: (theme) => theme.palette.background.default,
         borderRadius: CHAT_WINDOW.BORDER_RADIUS,
         border: (theme) => `1px solid ${theme.customColors.borders.light}`,
@@ -118,7 +135,8 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
         justifyContent: hasChatStarted ? 'flex-start' : 'center',
         position: 'relative',
         overflow: 'hidden',
-        transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        flexShrink: 1,
       }}
     >
       {/* Messages Container */}
@@ -127,11 +145,7 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
         aria-label="Chat messages"
         aria-live="polite"
         sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: CHAT_WINDOW.INPUT_HEIGHT,
+          flex: 1,
           overflowY: 'auto',
           display: hasChatStarted ? 'flex' : 'none',
           flexDirection: 'column',
@@ -171,13 +185,59 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
 
       <Box
         sx={{
-          position: hasChatStarted ? 'absolute' : 'relative',
-          bottom: hasChatStarted ? 0 : 'auto',
-          left: hasChatStarted ? 0 : 'auto',
-          right: hasChatStarted ? 0 : 'auto',
           width: '100%',
+          flexShrink: 0,
+          position: 'relative',
         }}
       >
+        {/* Suggestion Chips for narrow screens */}
+        {hasChatStarted && showChips && (
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: '100%',
+              left: 0,
+              right: 0,
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 1,
+              justifyContent: 'center',
+              px: 2,
+              pb: 1.5,
+              opacity: showBubbles ? 1 : 0,
+              pointerEvents: showBubbles ? 'auto' : 'none',
+              transition: 'opacity 0.3s ease',
+            }}
+          >
+            {bubbleConfigs.map((config) => (
+              <Chip
+                key={config.id}
+                label={config.text}
+                onClick={() => handleChipClick(config.text)}
+                disabled={isLoading}
+                sx={{
+                  backgroundColor: theme.customColors.components.suggestionBubble,
+                  color: theme.customColors.overlays.white85,
+                  border: `1px solid rgba(${theme.glow.rgb}, 0.2)`,
+                  fontSize: '0.85rem',
+                  fontWeight: 400,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: theme.customColors.components.suggestionBubbleHover,
+                    boxShadow: theme.palette.mode === 'dark'
+                      ? `0 0 15px rgba(255, 255, 255, 0.08)`
+                      : `0 2px 8px rgba(0, 0, 0, 0.1)`,
+                    transform: 'translateY(-2px)',
+                  },
+                  '&.Mui-disabled': {
+                    opacity: 0.5,
+                  },
+                }}
+              />
+            ))}
+          </Box>
+        )}
         <ChatInput
           inputText={inputText}
           isLoading={isLoading}
