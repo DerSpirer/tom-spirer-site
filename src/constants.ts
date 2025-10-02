@@ -19,21 +19,8 @@ export const BREAKPOINTS = {
   HIDE_BUBBLES: 1200,
 } as const
 
-const getApiBaseUrl = (): string => {
-  // Check if running on localhost
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:5219';
-    }
-  }
-  
-  // Otherwise use environment variable or production URL
-  return import.meta.env.VITE_API_BASE_URL;
-};
-
 export const API = {
-  BASE_URL: getApiBaseUrl(),
+  BASE_URL: import.meta.env.VITE_API_BASE_URL,
   ENDPOINTS: {
     GENERATE_RESPONSE: '/api/Chat/GenerateResponse',
   },
