@@ -88,7 +88,7 @@ export const createAppTheme = (mode: PaletteMode) => {
     palette: {
       mode,
       primary: {
-        main: isDark ? '#4a9eff' : '#3b82f6', // Bright blue for dark, vibrant blue for light
+        main: isDark ? '#4a9eff' : '#5b8ee0', // Bright blue for dark, softer blue for light
       },
       secondary: {
         main: isDark ? '#dc004e' : '#db2777', // Rose/pink
@@ -113,8 +113,8 @@ export const createAppTheme = (mode: PaletteMode) => {
       ].join(','),
     },
     glow: {
-      color: isDark ? '#4a9eff' : '#3b82f6',
-      rgb: isDark ? '74, 158, 255' : '59, 130, 246',
+      color: isDark ? '#4a9eff' : '#5b8ee0',
+      rgb: isDark ? '74, 158, 255' : '91, 142, 224',
     },
     customColors: {
       // Background blob colors for animated background elements

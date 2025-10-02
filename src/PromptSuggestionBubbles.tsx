@@ -53,7 +53,7 @@ function PromptSuggestionBubbles({ onBubbleClick }: PromptSuggestionBubblesProps
                 borderRadius: '16px',
                 border: `1px solid rgba(${theme.glow.rgb}, 0.2)`,
                 cursor: 'pointer',
-                transition: 'box-shadow 0.3s ease, scale 0.2s ease, background-color 0.2s ease',
+                transition: 'box-shadow 0.3s ease, scale 0.2s ease',
                 '&:hover': {
                   backgroundColor: theme.customColors.overlays.paperDark,
                   boxShadow: `
