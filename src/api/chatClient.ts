@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance, AxiosError } from 'axios'
+import axios, { type AxiosInstance } from 'axios'
 import { API } from '../constants'
 
 // API Types based on OpenAPI spec
@@ -13,19 +13,13 @@ export const Role = {
 
 export type Role = (typeof Role)[keyof typeof Role]
 
-export interface Message {
+export interface ApiMessage {
   role: Role
   content: string
 }
 
 export interface GenerateResponseRequest {
-  messages: Message[]
-}
-
-export interface ServiceResultOfMessage {
-  success: boolean
-  message: string | null
-  data: Message | null
+  messages: ApiMessage[]
 }
 
 // API Client
@@ -48,7 +42,7 @@ export class ChatApiClient {
    * @returns Promise that resolves when streaming is complete
    */
   async generateResponseStream(
-    messages: Message[],
+    messages: ApiMessage[],
     onChunk: (chunk: string) => void
   ): Promise<void> {
     const request: GenerateResponseRequest = {
@@ -105,69 +99,6 @@ export class ChatApiClient {
       console.error('Error generating response:', error)
       throw error
     }
-  }
-
-  /**
-   * Generates a response from the chat API (legacy non-streaming method)
-   * @param messages - Array of messages in the conversation
-   * @returns ServiceResult containing the assistant's response
-   */
-  async generateResponse(messages: Message[]): Promise<ServiceResultOfMessage> {
-    const request: GenerateResponseRequest = {
-      messages,
-    }
-
-    try {
-      const response = await this.axiosInstance.post<ServiceResultOfMessage>(
-        API.ENDPOINTS.GENERATE_RESPONSE,
-        request
-      )
-
-      return response.data
-    } catch (error) {
-      console.error('Error generating response:', error)
-      
-      if (error instanceof AxiosError) {
-        return {
-          success: false,
-          message: error.response?.data?.message || error.message || 'Network error occurred',
-          data: null,
-        }
-      }
-      
-      return {
-        success: false,
-        message: error instanceof Error ? error.message : 'Unknown error occurred',
-        data: null,
-      }
-    }
-  }
-
-  /**
-   * Helper method to send a user message and get a response
-   * @param userMessage - The user's message text
-   * @param conversationHistory - Previous messages in the conversation
-   * @returns The assistant's response message or null on error
-   */
-  async sendMessage(
-    userMessage: string,
-    conversationHistory: Message[] = []
-  ): Promise<Message | null> {
-    const messages: Message[] = [
-      ...conversationHistory,
-      {
-        role: Role.User,
-        content: userMessage,
-      },
-    ]
-
-    const result = await this.generateResponse(messages)
-
-    if (result.success && result.data) {
-      return result.data
-    }
-
-    return null
   }
 }
 

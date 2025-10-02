@@ -1,5 +1,5 @@
 import type { Message } from '../types'
-import { Role, type Message as ApiMessage } from '../api/chatClient'
+import { Role, type ApiMessage } from '../api/chatClient'
 
 /**
  * Convert UI messages to API format

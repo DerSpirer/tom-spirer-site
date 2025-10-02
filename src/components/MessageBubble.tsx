@@ -5,7 +5,6 @@ import rehypeHighlight from 'rehype-highlight'
 import type { Message } from '../types'
 import { getMarkdownStyles } from '../styles/markdownStyles'
 import { useMemo, memo } from 'react'
-import 'highlight.js/styles/github-dark.css'
 
 interface MessageBubbleProps {
   message: Message
