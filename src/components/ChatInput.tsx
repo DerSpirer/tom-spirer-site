@@ -17,31 +17,27 @@ function ChatInput({
   inputRef,
   onInputChange, 
   onSend, 
-  onKeyPress 
+  onKeyPress
 }: ChatInputProps) {
   const theme = useTheme()
   
   return (
     <Box
       sx={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
         display: 'flex',
         gap: 1,
         alignItems: 'center',
         padding: 2,
-        borderRadius: '0 0 24px 24px',
+        borderRadius: '12px',
         backgroundColor: theme.customColors.overlays.paperDark,
         backdropFilter: 'blur(12px)',
-        borderTop: `1px solid ${theme.customColors.borders.subtle}`,
+        flexShrink: 0,
       }}
     >
       <TextField
         fullWidth
         variant="outlined"
-        placeholder="Type a message..."
+        placeholder="ask me anything"
         value={inputText}
         onChange={(e) => onInputChange(e.target.value)}
         onKeyPress={onKeyPress}

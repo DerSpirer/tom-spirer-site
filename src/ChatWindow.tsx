@@ -11,9 +11,11 @@ import ChatInput from './components/ChatInput'
 interface ChatWindowProps {
   suggestionText?: string
   onSuggestionUsed?: () => void
+  onChatStart?: () => void
+  hasChatStarted: boolean
 }
 
-function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
+function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStarted }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -46,6 +48,11 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
 
   const handleSend = useCallback(async () => {
     if (inputText.trim() === '' || isLoading) return
+
+    // Trigger chat start on first message
+    if (!hasChatStarted) {
+      onChatStart?.()
+    }
 
     const userMessageText = inputText
     const newUserMessage = createUserMessage(userMessageText, getNextMessageId())
@@ -92,7 +99,7 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [inputText, isLoading, messages, getNextMessageId])
+  }, [inputText, isLoading, messages, getNextMessageId, hasChatStarted, onChatStart])
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -109,15 +116,16 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
       sx={{
         width: '100%',
         maxWidth: CHAT_WINDOW.MAX_WIDTH,
-        height: CHAT_WINDOW.HEIGHT,
+        height: hasChatStarted ? CHAT_WINDOW.HEIGHT : CHAT_WINDOW.INPUT_HEIGHT,
         backgroundColor: (theme) => theme.palette.background.paper,
         borderRadius: CHAT_WINDOW.BORDER_RADIUS,
         border: (theme) => `1px solid ${theme.customColors.borders.light}`,
-        padding: 3,
         display: 'flex',
         flexDirection: 'column',
+        justifyContent: hasChatStarted ? 'flex-start' : 'center',
         position: 'relative',
         overflow: 'hidden',
+        transition: 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       {/* Messages Container */}
@@ -130,25 +138,34 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
           top: 0,
           left: 0,
           right: 0,
-          bottom: 0,
-          padding: 3,
+          bottom: CHAT_WINDOW.INPUT_HEIGHT,
           overflowY: 'auto',
-          display: 'flex',
+          display: hasChatStarted ? 'flex' : 'none',
           flexDirection: 'column',
           gap: 2,
-          paddingBottom: CHAT_WINDOW.INPUT_HEIGHT,
-          '&::-webkit-scrollbar': {
-            width: '8px',
+          padding: 3,
+          opacity: 0,
+          animation: hasChatStarted ? 'fadeInMessages 0.4s ease 0.5s forwards' : 'none',
+          '@keyframes fadeInMessages': {
+            from: {
+              opacity: 0,
+            },
+            to: {
+              opacity: 1,
+            },
           },
-          '&::-webkit-scrollbar-track': {
-            background: (theme) => theme.customColors.overlays.white05,
-            borderRadius: '4px',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: (theme) => theme.customColors.borders.light,
-            borderRadius: '4px',
-            '&:hover': {
-              background: (theme) => theme.customColors.overlays.white25,
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: (theme) => theme.customColors.overlays.white05,
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: (theme) => theme.customColors.borders.light,
+              borderRadius: '4px',
+              '&:hover': {
+                background: (theme) => theme.customColors.overlays.white25,
             },
           },
         }}
@@ -161,15 +178,25 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
         <div ref={messagesEndRef} />
       </Box>
 
-      {/* Floating Input Area */}
-      <ChatInput
-        inputText={inputText}
-        isLoading={isLoading}
-        inputRef={inputRef}
-        onInputChange={setInputText}
-        onSend={handleSend}
-        onKeyPress={handleKeyPress}
-      />
+      {/* Input Area */}
+      <Box
+        sx={{
+          position: hasChatStarted ? 'absolute' : 'relative',
+          bottom: hasChatStarted ? 0 : 'auto',
+          left: hasChatStarted ? 0 : 'auto',
+          right: hasChatStarted ? 0 : 'auto',
+          width: '100%',
+        }}
+      >
+        <ChatInput
+          inputText={inputText}
+          isLoading={isLoading}
+          inputRef={inputRef}
+          onInputChange={setInputText}
+          onSend={handleSend}
+          onKeyPress={handleKeyPress}
+        />
+      </Box>
     </Box>
   )
 }

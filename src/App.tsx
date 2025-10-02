@@ -5,6 +5,7 @@ import PromptSuggestionBubbles from './PromptSuggestionBubbles'
 
 function App() {
   const [suggestionText, setSuggestionText] = useState<string>('')
+  const [hasChatStarted, setHasChatStarted] = useState(false)
 
   const handleBubbleClick = useCallback((text: string) => {
     setSuggestionText(text)
@@ -12,6 +13,10 @@ function App() {
 
   const handleSuggestionUsed = useCallback(() => {
     setSuggestionText('')
+  }, [])
+
+  const handleChatStart = useCallback(() => {
+    setHasChatStarted(true)
   }, [])
 
   return (
@@ -28,9 +33,27 @@ function App() {
         <ChatWindow 
           suggestionText={suggestionText}
           onSuggestionUsed={handleSuggestionUsed}
+          onChatStart={handleChatStart}
+          hasChatStarted={hasChatStarted}
         />
       </Box>
-      <PromptSuggestionBubbles onBubbleClick={handleBubbleClick} />
+      {hasChatStarted && (
+        <Box
+          sx={{
+            animation: 'fadeIn 1s ease 0.9s both',
+            '@keyframes fadeIn': {
+              from: {
+                opacity: 0,
+              },
+              to: {
+                opacity: 1,
+              },
+            },
+          }}
+        >
+          <PromptSuggestionBubbles onBubbleClick={handleBubbleClick} />
+        </Box>
+      )}
     </Container>
   )
 }
