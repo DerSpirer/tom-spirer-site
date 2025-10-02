@@ -55,22 +55,40 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
     setInputText('')
     setIsLoading(true)
 
-    try {
-      // Get conversation history and send to API
-      const conversationHistory = convertToApiMessages(messages)
-      const response = await chatApi.sendMessage(userMessageText, conversationHistory)
+    // Create a placeholder agent message for streaming
+    const agentMessageId = getNextMessageId()
+    const placeholderMessage = createAgentMessage('', agentMessageId)
+    setMessages((prev) => [...prev, placeholderMessage])
 
-      if (response) {
-        const agentMessage = createAgentMessage(response.content, getNextMessageId())
-        setMessages((prev) => [...prev, agentMessage])
-      } else {
-        const errorMessage = createErrorMessage(getNextMessageId())
-        setMessages((prev) => [...prev, errorMessage])
-      }
+    try {
+      // Get conversation history and send to API with streaming
+      const conversationHistory = convertToApiMessages(messages)
+      const apiMessages = [
+        ...conversationHistory,
+        { role: 'user' as const, content: userMessageText }
+      ]
+
+      let accumulatedText = ''
+
+      await chatApi.generateResponseStream(apiMessages, (chunk: string) => {
+        accumulatedText += chunk
+        // Update the placeholder message with accumulated text
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === agentMessageId
+              ? { ...msg, text: accumulatedText }
+              : msg
+          )
+        )
+      })
     } catch (error) {
       console.error('Error sending message:', error)
-      const errorMessage = createErrorMessage(getNextMessageId())
-      setMessages((prev) => [...prev, errorMessage])
+      // Remove placeholder message and add error message
+      setMessages((prev) => {
+        const filtered = prev.filter((msg) => msg.id !== agentMessageId)
+        const errorMessage = createErrorMessage(getNextMessageId())
+        return [...filtered, errorMessage]
+      })
     } finally {
       setIsLoading(false)
     }
