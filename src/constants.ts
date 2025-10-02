@@ -20,13 +20,6 @@ export const BUBBLE = {
   },
 } as const
 
-// Animation constants
-export const ANIMATION = {
-  SPEED_FACTOR: 1,
-  DISTANCE_FACTOR: 0.3,
-  TYPING_SPEED_MS: 30, // Milliseconds per character for typing effect
-} as const
-
 // Responsive breakpoints
 export const BREAKPOINTS = {
   HIDE_BUBBLES: 1200,

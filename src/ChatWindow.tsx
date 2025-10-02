@@ -1,10 +1,8 @@
-import { Box, useTheme } from '@mui/material'
-import { useState, useRef, useEffect } from 'react'
+import { Box } from '@mui/material'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { chatApi } from './api/chatClient'
 import type { Message } from './types'
-import { createGlowPulse } from './utils/animations'
 import { convertToApiMessages, createUserMessage, createAgentMessage, createErrorMessage } from './utils/messageHelpers'
-import { useTypingAnimation } from './hooks/useTypingAnimation'
 import { useMessageId } from './hooks/useMessageId'
 import { CHAT_WINDOW } from './constants'
 import MessageBubble from './components/MessageBubble'
@@ -16,45 +14,38 @@ interface ChatWindowProps {
 }
 
 function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
-  const theme = useTheme()
-  const glowPulse = createGlowPulse(theme.glow.rgb)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  
-  // Use typing animation hook for suggestion text
-  const { isTyping } = useTypingAnimation({
-    text: suggestionText || '',
-    onTextChange: setInputText,
-    onComplete: onSuggestionUsed,
-  })
 
   // Generate unique message IDs
   const getNextMessageId = useMessageId()
 
   // Auto-scroll to bottom when new messages arrive
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  }, [])
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages, scrollToBottom])
 
-  // Focus input field when typing animation completes
+  // Handle suggestion text - directly set it without animation
   useEffect(() => {
-    if (!isTyping && inputText) {
-      // Small delay to ensure the field is no longer disabled
+    if (suggestionText) {
+      setInputText(suggestionText)
+      onSuggestionUsed?.()
+      // Focus input field
       setTimeout(() => {
         inputRef.current?.focus()
       }, 10)
     }
-  }, [isTyping, inputText])
+  }, [suggestionText, onSuggestionUsed])
 
-  const handleSend = async () => {
-    if (inputText.trim() === '' || isLoading || isTyping) return
+  const handleSend = useCallback(async () => {
+    if (inputText.trim() === '' || isLoading) return
 
     const userMessageText = inputText
     const newUserMessage = createUserMessage(userMessageText, getNextMessageId())
@@ -83,14 +74,14 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [inputText, isLoading, messages, getNextMessageId])
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
     }
-  }
+  }, [handleSend])
 
   return (
     <Box
@@ -101,7 +92,7 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
         width: '100%',
         maxWidth: CHAT_WINDOW.MAX_WIDTH,
         height: CHAT_WINDOW.HEIGHT,
-        backgroundColor: 'background.paper',
+        backgroundColor: (theme) => theme.palette.background.paper,
         borderRadius: CHAT_WINDOW.BORDER_RADIUS,
         border: (theme) => `1px solid ${theme.customColors.borders.light}`,
         padding: 3,
@@ -109,7 +100,6 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
         flexDirection: 'column',
         position: 'relative',
         overflow: 'hidden',
-        animation: `${glowPulse} 8s ease-in-out infinite`,
       }}
     >
       {/* Messages Container */}
@@ -157,7 +147,6 @@ function ChatWindow({ suggestionText, onSuggestionUsed }: ChatWindowProps) {
       <ChatInput
         inputText={inputText}
         isLoading={isLoading}
-        isTyping={isTyping}
         inputRef={inputRef}
         onInputChange={setInputText}
         onSend={handleSend}

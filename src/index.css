@@ -4,68 +4,10 @@
   box-sizing: border-box;
 }
 
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-}
-
 body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
   background: var(--color-slate, #0f172a); /* slate-900 - defined in theme.customColors.blobs.slate */
-  overflow: hidden;
-  position: relative;
-}
-
-body::before,
-body::after,
-#root::before {
-  content: '';
-  position: fixed;
-  border-radius: 9999px;
-  mix-blend-mode: multiply;
-  filter: blur(64px);
-  opacity: 0.7;
-  animation: blob 7s infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
-body::before {
-  top: -10%;
-  left: -10%;
-  width: 70rem;
-  height: 70rem;
-  background: var(--color-fuchsia, #4a0e4e); /* dark fuchsia - defined in theme.customColors.blobs.fuchsia */
-}
-
-body::after {
-  top: -10%;
-  right: -10%;
-  width: 70rem;
-  height: 70rem;
-  background: var(--color-pink, #4d0f29); /* dark pink - defined in theme.customColors.blobs.pink */
-  animation-delay: 2s;
-}
-
-#root::before {
-  bottom: -15%;
-  left: 50%;
-  width: 80rem;
-  height: 80rem;
-  transform: translateX(-50%);
-  background: var(--color-purple1, #3a1254); /* dark purple - defined in theme.customColors.blobs.purple1 */
-  animation-delay: 4s;
 }
 
 #root {
@@ -73,40 +15,198 @@ body::after {
   z-index: 1;
 }
 
-.blob {
-  position: fixed;
-  border-radius: 9999px;
-  mix-blend-mode: multiply;
-  filter: blur(64px);
-  opacity: 0.7;
-  animation: blob 7s infinite;
-  pointer-events: none;
-  z-index: 0;
+/* Register CSS custom properties for smooth animation interpolation */
+@property --bubble1-x {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --bubble1-y {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --bubble1-rotate {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
 }
 
-.blob-1 {
-  top: 20%;
-  right: 5%;
-  width: 65rem;
-  height: 65rem;
-  background: var(--color-rose, #520d23); /* dark rose - defined in theme.customColors.blobs.rose */
-  animation-delay: 3s;
+@property --bubble2-x {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --bubble2-y {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --bubble2-rotate {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
 }
 
-.blob-2 {
-  bottom: 10%;
-  right: 15%;
-  width: 75rem;
-  height: 75rem;
-  background: var(--color-purple2, #3d1560); /* dark purple - defined in theme.customColors.blobs.purple2 */
-  animation-delay: 5s;
+@property --bubble3-x {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --bubble3-y {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --bubble3-rotate {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
 }
 
-.blob-3 {
-  top: 50%;
-  left: 5%;
-  width: 60rem;
-  height: 60rem;
-  background: var(--color-magenta, #5a0d22); /* dark magenta - defined in theme.customColors.blobs.magenta */
-  animation-delay: 6s;
+@property --bubble4-x {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --bubble4-y {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --bubble4-rotate {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Bubble float animations - sine wave approximations using ease-in-out
+ * 
+ * These animations create smooth, organic floating motion for the prompt bubbles.
+ * Each bubble has 3 independent animations (x, y, rotation) with different durations
+ * and delays to create complex, non-repeating patterns.
+ * 
+ * Using ease-in-out timing creates an S-curve that closely approximates sine waves.
+ * Animation values are composed via CSS custom properties (--bubbleN-x/y/rotate).
+ */
+
+/* Bubble 1 animations */
+@keyframes bubble1-float-x {
+  0%, 100% { --bubble1-x: 0px; }
+  25% { --bubble1-x: 4.5px; }
+  75% { --bubble1-x: -4.5px; }
+}
+
+@keyframes bubble1-float-y {
+  0%, 100% { --bubble1-y: 0px; }
+  25% { --bubble1-y: 0.6px; }
+  75% { --bubble1-y: -0.6px; }
+}
+
+@keyframes bubble1-rotate {
+  0%, 100% { --bubble1-rotate: 0deg; }
+  25% { --bubble1-rotate: 0.9deg; }
+  75% { --bubble1-rotate: -0.9deg; }
+}
+
+/* Bubble 2 animations */
+@keyframes bubble2-float-x {
+  0%, 100% { --bubble2-x: 0px; }
+  25% { --bubble2-x: 5.4px; }
+  75% { --bubble2-x: -5.4px; }
+}
+
+@keyframes bubble2-float-y {
+  0%, 100% { --bubble2-y: 0px; }
+  25% { --bubble2-y: 0.45px; }
+  75% { --bubble2-y: -0.45px; }
+}
+
+@keyframes bubble2-rotate {
+  0%, 100% { --bubble2-rotate: 0deg; }
+  25% { --bubble2-rotate: 0.75deg; }
+  75% { --bubble2-rotate: -0.75deg; }
+}
+
+/* Bubble 3 animations */
+@keyframes bubble3-float-x {
+  0%, 100% { --bubble3-x: 0px; }
+  25% { --bubble3-x: 3.6px; }
+  75% { --bubble3-x: -3.6px; }
+}
+
+@keyframes bubble3-float-y {
+  0%, 100% { --bubble3-y: 0px; }
+  25% { --bubble3-y: 0.54px; }
+  75% { --bubble3-y: -0.54px; }
+}
+
+@keyframes bubble3-rotate {
+  0%, 100% { --bubble3-rotate: 0deg; }
+  25% { --bubble3-rotate: 0.6deg; }
+  75% { --bubble3-rotate: -0.6deg; }
+}
+
+/* Bubble 4 animations */
+@keyframes bubble4-float-x {
+  0%, 100% { --bubble4-x: 0px; }
+  25% { --bubble4-x: 4.2px; }
+  75% { --bubble4-x: -4.2px; }
+}
+
+@keyframes bubble4-float-y {
+  0%, 100% { --bubble4-y: 0px; }
+  25% { --bubble4-y: 0.48px; }
+  75% { --bubble4-y: -0.48px; }
+}
+
+@keyframes bubble4-rotate {
+  0%, 100% { --bubble4-rotate: 0deg; }
+  25% { --bubble4-rotate: 0.84deg; }
+  75% { --bubble4-rotate: -0.84deg; }
+}
+
+/* Apply animations to bubbles */
+.bubble-1 {
+  --bubble1-x: 0px;
+  --bubble1-y: 0px;
+  --bubble1-rotate: 0deg;
+  transform: translateX(var(--bubble1-x)) translateY(var(--bubble1-y)) rotate(var(--bubble1-rotate));
+  animation: 
+    bubble1-float-x 7854ms ease-in-out infinite,
+    bubble1-float-y 5236ms ease-in-out infinite,
+    bubble1-rotate 6283ms ease-in-out infinite;
+}
+
+.bubble-2 {
+  --bubble2-x: 0px;
+  --bubble2-y: 0px;
+  --bubble2-rotate: 0deg;
+  transform: translateX(var(--bubble2-x)) translateY(var(--bubble2-y)) rotate(var(--bubble2-rotate));
+  animation: 
+    bubble2-float-x 6283ms ease-in-out infinite -1571ms,
+    bubble2-float-y 6981ms ease-in-out infinite -1164ms,
+    bubble2-rotate 7854ms ease-in-out infinite;
+}
+
+.bubble-3 {
+  --bubble3-x: 0px;
+  --bubble3-y: 0px;
+  --bubble3-rotate: 0deg;
+  transform: translateX(var(--bubble3-x)) translateY(var(--bubble3-y)) rotate(var(--bubble3-rotate));
+  animation: 
+    bubble3-float-x 6981ms ease-in-out infinite -3491ms,
+    bubble3-float-y 5712ms ease-in-out infinite -714ms,
+    bubble3-rotate 5236ms ease-in-out infinite;
+}
+
+.bubble-4 {
+  --bubble4-x: 0px;
+  --bubble4-y: 0px;
+  --bubble4-rotate: 0deg;
+  transform: translateX(var(--bubble4-x)) translateY(var(--bubble4-y)) rotate(var(--bubble4-rotate));
+  animation: 
+    bubble4-float-x 8976ms ease-in-out infinite -6732ms,
+    bubble4-float-y 6283ms ease-in-out infinite -524ms,
+    bubble4-rotate 6981ms ease-in-out infinite;
 }

@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import type { Message } from '../types'
 import { getMarkdownStyles } from '../styles/markdownStyles'
+import { useMemo, memo } from 'react'
 import 'highlight.js/styles/github-dark.css'
 
 interface MessageBubbleProps {
@@ -11,6 +12,12 @@ interface MessageBubbleProps {
 }
 
 function MessageBubble({ message }: MessageBubbleProps) {
+  // Memoize markdown styles to avoid recalculating on every render
+  const markdownStyles = useMemo(
+    () => getMarkdownStyles(message.sender),
+    [message.sender]
+  )
+
   return (
     <Box
       sx={{
@@ -18,7 +25,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
         justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
       }}
     >
-      <Box sx={getMarkdownStyles(message.sender)}>
+      <Box sx={markdownStyles}>
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeHighlight]}
@@ -30,4 +37,5 @@ function MessageBubble({ message }: MessageBubbleProps) {
   )
 }
 
-export default MessageBubble
+// Memoize the entire component to prevent re-rendering unchanged messages
+export default memo(MessageBubble)

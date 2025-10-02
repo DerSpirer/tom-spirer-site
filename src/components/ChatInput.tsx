@@ -5,7 +5,6 @@ import type { RefObject } from 'react'
 interface ChatInputProps {
   inputText: string
   isLoading: boolean
-  isTyping?: boolean
   inputRef: RefObject<HTMLInputElement | null>
   onInputChange: (value: string) => void
   onSend: () => void
@@ -15,7 +14,6 @@ interface ChatInputProps {
 function ChatInput({ 
   inputText, 
   isLoading, 
-  isTyping = false,
   inputRef,
   onInputChange, 
   onSend, 
@@ -47,7 +45,7 @@ function ChatInput({
         value={inputText}
         onChange={(e) => onInputChange(e.target.value)}
         onKeyPress={onKeyPress}
-        disabled={isLoading || isTyping}
+        disabled={isLoading}
         inputRef={inputRef}
         inputProps={{
           'aria-label': 'Chat message input',
@@ -81,7 +79,7 @@ function ChatInput({
       <IconButton
         color="primary"
         onClick={onSend}
-        disabled={isLoading || isTyping}
+        disabled={isLoading}
         aria-label={isLoading ? 'Sending message' : 'Send message'}
         sx={{
           backgroundColor: 'primary.main',
