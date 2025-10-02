@@ -204,8 +204,8 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
               justifyContent: 'center',
               px: 2,
               pb: 1.5,
-              opacity: showBubbles ? 1 : 0,
-              pointerEvents: showBubbles ? 'auto' : 'none',
+              opacity: showBubbles && !isLoading ? 1 : 0,
+              pointerEvents: showBubbles && !isLoading ? 'auto' : 'none',
               transition: 'opacity 0.3s ease',
             }}
           >
@@ -214,7 +214,6 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
                 key={config.id}
                 label={config.text}
                 onClick={() => handleChipClick(config.text)}
-                disabled={isLoading}
                 sx={{
                   backgroundColor: theme.customColors.components.suggestionBubble,
                   color: theme.customColors.overlays.white85,
@@ -229,9 +228,6 @@ function ChatWindow({ suggestionText, onSuggestionUsed, onChatStart, hasChatStar
                       ? `0 0 15px rgba(255, 255, 255, 0.08)`
                       : `0 2px 8px rgba(0, 0, 0, 0.1)`,
                     transform: 'translateY(-2px)',
-                  },
-                  '&.Mui-disabled': {
-                    opacity: 0.5,
                   },
                 }}
               />
