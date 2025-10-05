@@ -4,8 +4,8 @@ import type { Theme, PaletteMode } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import App from './App'
 import { createAppTheme } from './theme'
-import ThemeToggle from './components/ThemeToggle'
-import GithubMenu from './components/GithubMenu'
+import ThemeToggle from './components/layout/ThemeToggle'
+import GithubMenu from './components/layout/GithubMenu'
 
 const THEME_STORAGE_KEY = 'app-theme-mode'
 
@@ -14,7 +14,7 @@ const getInitialThemeMode = (): PaletteMode => {
   if (stored === 'light' || stored === 'dark') {
     return stored
   }
-  return 'dark'
+  return 'light'
 }
 
 const injectThemeColors = (theme: Theme) => {

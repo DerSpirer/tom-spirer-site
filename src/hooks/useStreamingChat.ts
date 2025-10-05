@@ -107,9 +107,9 @@ export function useStreamingChat() {
     let status = 'sent'
     
     try {
-      await chatApi.sendMessage(params)
+      await chatApi.leaveMessage(params)
     } catch (error) {
-      console.error('Error sending message:', error)
+      console.error('Error leaving message:', error)
       status = 'failed'
     }
     

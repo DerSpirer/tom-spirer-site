@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip } from '@mui/material'
+import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import CodeIcon from '@mui/icons-material/Code'
 import StorageIcon from '@mui/icons-material/Storage'
+import FloatingActionButton from '../common/FloatingActionButton'
 
 function GithubMenu() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -23,30 +24,17 @@ function GithubMenu() {
 
   return (
     <>
-      <Tooltip title="View source code" placement="left">
-        <IconButton
-          onClick={handleClick}
-          aria-label="github repositories"
-          aria-controls={open ? 'github-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          sx={{
-            position: 'fixed',
-            top: 16,
-            right: 72, // Position to the left of ThemeToggle (16 + 40 + 16)
-            zIndex: 1000,
-            backgroundColor: (theme) => theme.customColors.overlays.paper,
-            backdropFilter: 'blur(10px)',
-            border: (theme) => `1px solid ${theme.customColors.borders.light}`,
-            '&:hover': {
-              backgroundColor: (theme) => theme.customColors.overlays.paperDark,
-            },
-            transition: 'all 0.3s ease',
-          }}
-        >
-          <GitHubIcon />
-        </IconButton>
-      </Tooltip>
+      <FloatingActionButton
+        tooltip="View source code"
+        onClick={handleClick}
+        ariaLabel="github repositories"
+        ariaControls={open ? 'github-menu' : undefined}
+        ariaHaspopup={true}
+        ariaExpanded={open}
+        fabPosition="primary"
+      >
+        <GitHubIcon />
+      </FloatingActionButton>
       <Menu
         id="github-menu"
         anchorEl={anchorEl}
@@ -54,19 +42,11 @@ function GithubMenu() {
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right',
+          horizontal: 'left',
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
-        }}
-        sx={{
-          '& .MuiPaper-root': {
-            backgroundColor: (theme) => theme.customColors.overlays.paperDark,
-            backdropFilter: 'blur(10px)',
-            border: (theme) => `1px solid ${theme.customColors.borders.light}`,
-            mt: 1,
-          },
+          horizontal: 'left',
         }}
       >
         <MenuItem onClick={() => handleNavigate('https://github.com/DerSpirer/tom-spirer-site')}>
