@@ -31,7 +31,6 @@ export class ChatApiClient {
     const request: GenerateResponseRequest = {
       messages,
     }
-
     let lastProcessedIndex = 0
     let buffer = '' // Buffer for incomplete lines
 

@@ -24,6 +24,25 @@ export interface LeaveMessageParams {
   body: string
 }
 
+export const ToolName = {
+  LeaveMessage: 'leave_message',
+} as const
+
+export type ToolNameType = (typeof ToolName)[keyof typeof ToolName]
+
+export const ToolResponseStatus = {
+  Sent: 'sent',
+  Failed: 'failed',
+  Cancelled: 'cancelled',
+} as const
+
+export type ToolResponseStatusType = (typeof ToolResponseStatus)[keyof typeof ToolResponseStatus]
+
+export interface ToolResponse {
+  status: string
+  parameters?: LeaveMessageParams
+}
+
 /**
  * Represents a chat message.
  * 

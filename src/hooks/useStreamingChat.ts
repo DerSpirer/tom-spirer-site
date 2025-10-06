@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { chatApi } from '../api/chatClient'
 import type { Message, LeaveMessageParams } from '../types'
+import { ToolResponseStatus } from '../types'
 import { createUserMessage, createAssistantMessage, createErrorMessage, createToolResponseMessage } from '../utils/messageHelpers'
 import { createMessageAccumulator } from '../utils/messageAccumulator'
 
@@ -27,23 +28,18 @@ export function useStreamingChat() {
    * Handles streaming responses, tool calls, and error states.
    * Always updates the last message in the array (no IDs needed).
    */
-  const generateResponse = useCallback(async () => {
+  const generateResponse = useCallback(async (messagesBeforeResponse: Message[]) => {
     if (isLoading) return
     
     setIsLoading(true)
     
     const placeholderMessage = createAssistantMessage('')
-    
-    let apiMessages: Message[] = []
-    setMessages((currentMessages) => {
-      apiMessages = [...currentMessages]
-      return [...currentMessages, placeholderMessage]
-    })
+    setMessages((currentMessages) => [...currentMessages, placeholderMessage])
 
     try {
       const accumulator = createMessageAccumulator()
 
-      await chatApi.generateResponseStream(apiMessages, (chunk) => {
+      await chatApi.generateResponseStream(messagesBeforeResponse, (chunk) => {
         accumulator.accumulate(chunk)
         const state = accumulator.getState()
         
@@ -92,10 +88,11 @@ export function useStreamingChat() {
     }
 
     const newUserMessage = createUserMessage(userMessageText)
-    setMessages((prev) => [...prev, newUserMessage])
+    const messagesWithUserMessage = [...messages, newUserMessage]
+    setMessages(messagesWithUserMessage)
 
-    await generateResponse()
-  }, [isLoading, hasChatStarted, generateResponse])
+    await generateResponse(messagesWithUserMessage)
+  }, [isLoading, hasChatStarted, generateResponse, messages])
 
   /**
    * Handles accepting the leave_message tool call (contact form submission).
@@ -104,13 +101,13 @@ export function useStreamingChat() {
    * @param params - The contact form parameters (email, name, subject, body)
    */
   const handleAcceptLeaveMessage = useCallback(async (toolCallId: string, params: LeaveMessageParams) => {
-    let status = 'sent'
+    let status: string = ToolResponseStatus.Sent
     
     try {
       await chatApi.leaveMessage(params)
     } catch (error) {
       console.error('Error leaving message:', error)
-      status = 'failed'
+      status = ToolResponseStatus.Failed
     }
     
     const toolResponse = createToolResponseMessage(toolCallId, { status, parameters: params })
@@ -123,7 +120,7 @@ export function useStreamingChat() {
    * @param toolCallId - The ID of the tool call being rejected
    */
   const handleRejectLeaveMessage = useCallback((toolCallId: string) => {
-    const toolResponse = createToolResponseMessage(toolCallId, { status: 'cancelled' })
+    const toolResponse = createToolResponseMessage(toolCallId, { status: ToolResponseStatus.Cancelled })
     setMessages((prev) => [...prev, toolResponse])
   }, [])
 
@@ -141,7 +138,7 @@ export function useStreamingChat() {
       messages.length > lastProcessedMessageCount.current
     ) {
       lastProcessedMessageCount.current = messages.length
-      generateResponse()
+      generateResponse(messages)
     }
   }, [messages, isLoading, generateResponse])
 
