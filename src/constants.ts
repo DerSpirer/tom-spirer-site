@@ -12,7 +12,8 @@ export const FAB = {
 } as const
 
 export const API = {
-  BASE_URL: import.meta.env.DEV ? import.meta.env.VITE_API_BASE_URL_LOCALHOST : import.meta.env.VITE_API_BASE_URL_PROD,
+  // BASE_URL: import.meta.env.DEV ? import.meta.env.VITE_API_BASE_URL_LOCALHOST : import.meta.env.VITE_API_BASE_URL_PROD,
+  BASE_URL: import.meta.env.VITE_API_BASE_URL_PROD,
   ENDPOINTS: {
     GENERATE_RESPONSE: '/api/Chat/GenerateResponse',
     LEAVE_MESSAGE: '/api/chat/LeaveMessage',
