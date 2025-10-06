@@ -14,6 +14,9 @@ export const getMessageBubbleStyles = (sender: 'user' | 'agent' | 'tool'): SxPro
     : (theme) => theme.customColors.components.agentMessage,
   color: 'text.primary',
   boxShadow: (theme) => theme.customColors.shadows.standard,
+  border: (theme) => sender === 'agent' 
+    ? `1px solid ${theme.customColors.borders.light}`
+    : 'none',
 })
 
 /**

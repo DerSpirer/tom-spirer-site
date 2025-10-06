@@ -151,6 +151,7 @@ function MessagePreview({
         sx={{
           ...MESSAGE_CONTAINER_STYLES,
           backgroundColor: (theme) => theme.customColors.components.agentMessage,
+          border: (theme) => `1px solid ${theme.customColors.borders.light}`,
         }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -199,6 +200,7 @@ function MessagePreview({
       sx={{
         ...MESSAGE_CONTAINER_STYLES,
         backgroundColor: (theme) => theme.customColors.components.agentMessage,
+        border: (theme) => `1px solid ${theme.customColors.borders.light}`,
       }}
     >
       <Box sx={{ mb: readOnly ? 0 : 2 }}>

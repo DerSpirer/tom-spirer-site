@@ -96,10 +96,18 @@ function SuggestionChips({ inputText, inputContainerRef, onChipClick }: Suggesti
           label={text}
           onClick={() => onChipClick(text)}
           sx={{
-            backgroundColor: theme.palette.background.default,
+            backgroundColor: theme.customColors.components.suggestionChip,
             border: `1px solid ${theme.customColors.borders.light}`,
             fontSize: '0.85rem',
             flexShrink: 0,
+            boxShadow: theme.customColors.shadows.suggestionChip,
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            '&:hover': {
+              backgroundColor: theme.customColors.components.suggestionChipHover,
+              border: `1px solid ${theme.customColors.borders.glow}`,
+              boxShadow: theme.customColors.shadows.suggestionChipHover,
+              transform: 'translateY(-2px)',
+            },
           }}
         />
       ))}

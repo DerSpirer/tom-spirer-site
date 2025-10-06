@@ -48,14 +48,40 @@ function GithubMenu() {
           vertical: 'top',
           horizontal: 'left',
         }}
+        slotProps={{
+          paper: {
+            sx: {
+              mt: 1,
+              backgroundColor: (theme) => theme.customColors.overlays.paperDark,
+              border: (theme) => `1px solid ${theme.customColors.borders.light}`,
+              boxShadow: (theme) => theme.customColors.shadows.chatWindow,
+            },
+          },
+        }}
       >
-        <MenuItem onClick={() => handleNavigate('https://github.com/DerSpirer/tom-spirer-site')}>
+        <MenuItem 
+          onClick={() => handleNavigate('https://github.com/DerSpirer/tom-spirer-site')}
+          sx={{
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              backgroundColor: (theme) => theme.customColors.overlays.white10,
+            },
+          }}
+        >
           <ListItemIcon>
             <CodeIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Frontend Repository</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => handleNavigate('https://github.com/DerSpirer/TomSpirerSiteBackend')}>
+        <MenuItem 
+          onClick={() => handleNavigate('https://github.com/DerSpirer/TomSpirerSiteBackend')}
+          sx={{
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              backgroundColor: (theme) => theme.customColors.overlays.white10,
+            },
+          }}
+        >
           <ListItemIcon>
             <StorageIcon fontSize="small" />
           </ListItemIcon>

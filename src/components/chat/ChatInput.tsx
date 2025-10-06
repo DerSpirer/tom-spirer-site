@@ -56,15 +56,26 @@ function ChatInput({
           '& .MuiOutlinedInput-root': {
             borderRadius: '12px',
             backgroundColor: theme.customColors.overlays.white05,
+            border: `1px solid ${theme.customColors.borders.light}`,
             boxShadow: theme.customColors.shadows.standard,
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             '& fieldset': {
               border: 'none',
             },
-            '&:hover fieldset': {
-              border: 'none',
+            '&:hover': {
+              border: `1px solid ${theme.customColors.borders.glow}`,
+              '& fieldset': {
+                border: 'none',
+              },
             },
-            '&.Mui-focused fieldset': {
-              border: 'none',
+            '&.Mui-focused': {
+              border: `1px solid ${theme.customColors.borders.glow}`,
+              boxShadow: theme.palette.mode === 'dark' 
+                ? `0 0 32px rgba(192, 132, 252, 0.25), ${theme.customColors.shadows.standard}`
+                : theme.customColors.shadows.standard,
+              '& fieldset': {
+                border: 'none',
+              },
             },
           '&.Mui-disabled': {
             '& input': {
@@ -86,8 +97,13 @@ function ChatInput({
         sx={{
           backgroundColor: 'primary.main',
           boxShadow: theme.customColors.shadows.standard,
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
             backgroundColor: 'primary.dark',
+            boxShadow: theme.palette.mode === 'dark' 
+              ? `0 0 24px rgba(99, 102, 241, 0.5), ${theme.customColors.shadows.standard}`
+              : theme.customColors.shadows.standard,
+            transform: 'scale(1.05)',
           },
           '&.Mui-disabled': {
             backgroundColor: theme.customColors.overlays.white12,
