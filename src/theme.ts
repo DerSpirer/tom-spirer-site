@@ -95,27 +95,27 @@ export const createAppTheme = (mode: PaletteMode) => {
     palette: {
       mode,
       primary: {
-        main: isDark ? '#6366f1' : '#7ba8e6',
+        main: isDark ? '#6366f1' : '#6366f1',
       },
       secondary: {
-        main: isDark ? '#ec4899' : '#db2777',
+        main: isDark ? '#ec4899' : '#ec4899',
       },
       success: {
-        main: isDark ? '#10b981' : '#81c995',
+        main: isDark ? '#10b981' : '#10b981',
       },
       error: {
-        main: isDark ? '#ef4444' : '#e88b8b',
+        main: isDark ? '#ef4444' : '#ef4444',
       },
       warning: {
-        main: isDark ? '#f59e0b' : '#f5c563',
+        main: isDark ? '#f59e0b' : '#f59e0b',
       },
       background: {
-        default: isDark ? '#0a0a0f' : '#f8f9fb',
-        paper: isDark ? '#1a1a2e' : '#f5f3f0',
+        default: isDark ? '#0a0a0f' : '#fafbfc',
+        paper: isDark ? '#1a1a2e' : '#ffffff',
       },
       text: {
-        primary: isDark ? '#f0f0f3' : '#0f172a',
-        secondary: isDark ? 'rgba(240, 240, 243, 0.7)' : 'rgba(15, 23, 42, 0.7)',
+        primary: isDark ? '#f0f0f3' : '#1e293b',
+        secondary: isDark ? 'rgba(240, 240, 243, 0.7)' : 'rgba(51, 65, 85, 0.7)',
       },
     },
     typography: {
@@ -129,26 +129,26 @@ export const createAppTheme = (mode: PaletteMode) => {
       ].join(','),
     },
     glow: {
-      color: isDark ? '#c084fc' : '#9333ea',
-      rgb: isDark ? '192, 132, 252' : '147, 51, 234',
+      color: isDark ? '#c084fc' : '#a78bfa',
+      rgb: isDark ? '192, 132, 252' : '167, 139, 250',
     },
     customColors: {
       blobs: isDark ? {
-        fuchsia: '#0d0817',
-        pink: '#0f0812',
-        purple1: '#0a0814',
-        purple2: '#0c0a18',
-        rose: '#0f0710',
-        magenta: '#0e0716',
-        slate: '#080810',
+        fuchsia: '#110a1c',
+        pink: '#130a16',
+        purple1: '#0e0a18',
+        purple2: '#100c1d',
+        rose: '#130a14',
+        magenta: '#120a1a',
+        slate: '#0a0a12',
       } : {
-        fuchsia: '#fae8ff',
-        pink: '#fce7f3',
-        purple1: '#f3e8ff',
-        purple2: '#ede9fe',
-        rose: '#ffe4e6',
-        magenta: '#fecdd3',
-        slate: '#f1f5f9',
+        fuchsia: '#f8f4ff',
+        pink: '#fcf2ff',
+        purple1: '#f4f1ff',
+        purple2: '#ebe8fe',
+        rose: '#fff3f4',
+        magenta: '#fdeff5',
+        slate: '#f4f6fc',
       },
       overlays: isDark ? {
         paper: 'rgba(26, 26, 46, 0.85)',
@@ -160,41 +160,41 @@ export const createAppTheme = (mode: PaletteMode) => {
         white30: 'rgba(255, 255, 255, 0.3)',
         white85: 'rgba(255, 255, 255, 0.85)',
       } : {
-        paper: 'rgba(252, 251, 250, 0.85)',
-        paperDark: 'rgba(252, 251, 250, 0.95)',
-        white05: 'rgba(0, 0, 0, 0.04)',
-        white10: 'rgba(0, 0, 0, 0.05)',
-        white12: 'rgba(0, 0, 0, 0.06)',
-        white25: 'rgba(0, 0, 0, 0.12)',
-        white30: 'rgba(0, 0, 0, 0.15)',
-        white85: 'rgba(0, 0, 0, 0.85)',
+        paper: 'rgba(255, 255, 255, 0.9)',
+        paperDark: 'rgba(255, 255, 255, 0.95)',
+        white05: 'rgba(99, 102, 241, 0.02)',
+        white10: 'rgba(99, 102, 241, 0.04)',
+        white12: 'rgba(99, 102, 241, 0.05)',
+        white25: 'rgba(99, 102, 241, 0.08)',
+        white30: 'rgba(99, 102, 241, 0.1)',
+        white85: 'rgba(30, 41, 59, 0.9)',
       },
       borders: {
-        light: isDark ? 'rgba(192, 132, 252, 0.2)' : 'rgba(0, 0, 0, 0.12)',
-        glow: `rgba(${isDark ? '192, 132, 252' : '147, 51, 234'}, 0.3)`,
+        light: isDark ? 'rgba(192, 132, 252, 0.2)' : 'rgba(167, 139, 250, 0.25)',
+        glow: `rgba(${isDark ? '192, 132, 252' : '167, 139, 250'}, ${isDark ? '0.3' : '0.4'})`,
       },
       components: isDark ? {
         suggestionChip: 'rgba(26, 26, 46, 0.9)',
         suggestionChipHover: 'rgba(99, 102, 241, 0.2)',
         agentMessage: 'rgba(192, 132, 252, 0.08)',
       } : {
-        suggestionChip: '#f8f9fb',
-        suggestionChipHover: '#f8f9fb',
-        agentMessage: 'rgba(147, 51, 234, 0.06)',
+        suggestionChip: 'rgba(255, 255, 255, 0.95)',
+        suggestionChipHover: 'rgba(167, 139, 250, 0.12)',
+        agentMessage: 'rgba(167, 139, 250, 0.08)',
       },
       shadows: {
         standard: isDark 
           ? '0 4px 24px rgba(0, 0, 0, 0.6), 0 8px 48px rgba(99, 102, 241, 0.15)'
-          : '0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+          : '0 4px 20px rgba(167, 139, 250, 0.15), 0 2px 8px rgba(99, 102, 241, 0.08)',
         chatWindow: isDark
           ? '0 12px 48px rgba(0, 0, 0, 0.7), 0 0 32px rgba(192, 132, 252, 0.15), 0 4px 16px rgba(99, 102, 241, 0.2)'
-          : '0 8px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)',
+          : '0 10px 40px rgba(167, 139, 250, 0.15), 0 4px 20px rgba(99, 102, 241, 0.1), 0 2px 8px rgba(167, 139, 250, 0.08)',
         suggestionChip: isDark
           ? '0 4px 24px rgba(0, 0, 0, 0.6), 0 0 24px rgba(192, 132, 252, 0.12)'
-          : '0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+          : '0 4px 16px rgba(167, 139, 250, 0.12), 0 2px 8px rgba(99, 102, 241, 0.08)',
         suggestionChipHover: isDark
           ? '0 0 48px rgba(192, 132, 252, 0.3), 0 0 80px rgba(99, 102, 241, 0.2), 0 8px 32px rgba(0, 0, 0, 0.5)'
-          : '0 8px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+          : '0 6px 30px rgba(167, 139, 250, 0.25), 0 4px 16px rgba(99, 102, 241, 0.15), 0 0 20px rgba(167, 139, 250, 0.2)',
       },
     },
   })
