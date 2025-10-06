@@ -28,7 +28,7 @@ function MessageList({ messages, hasChatStarted, isLoading, onLeaveMessage, onRe
         padding: hasChatStarted ? 3 : 0,
         paddingBottom: isMobile ? 3 + 4 : 3 + 12,
         opacity: hasChatStarted ? 1 : 0,
-        transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), padding 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         // Firefox scrollbar
         scrollbarWidth: 'thin',
         scrollbarColor: (theme) => `${theme.customColors.borders.light} ${theme.customColors.overlays.white05}`,

@@ -15,7 +15,7 @@ function Header() {
           flexDirection: 'column',
           alignItems: 'center',
           gap: hasChatStarted ? 0.5 : 1.5,
-          transition: 'all 2s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
           mb: isMobile ? 6 : (!hasChatStarted ? 12 : 0),
         }}
       >
@@ -30,7 +30,7 @@ function Header() {
             color: (theme) => theme.palette.text.primary,
             textAlign: 'center',
             animation: !hasChatStarted ? 'fadeInTitle 0.6s ease 0.2s forwards' : 'none',
-            transition: 'font-size 2s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'font-size 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             '@keyframes fadeInTitle': {
               from: {
                 opacity: 0,
@@ -56,7 +56,7 @@ function Header() {
             color: (theme) => theme.palette.text.secondary,
             textAlign: 'center',
             animation: !hasChatStarted ? 'fadeInSubtitle 0.6s ease 0.4s forwards' : 'none',
-            transition: 'font-size 2s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'font-size 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             '@keyframes fadeInSubtitle': {
               from: {
                 opacity: 0,

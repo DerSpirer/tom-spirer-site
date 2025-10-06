@@ -86,7 +86,7 @@ function SuggestionChips({ inputText, inputContainerRef, onChipClick }: Suggesti
         px: isMobile ? 2 : 0,
         opacity: isVisible ? 1 : 0,
         pointerEvents: isVisible ? 'auto' : 'none',
-        transition: 'opacity 0.6s, transform 2s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'opacity 0.3s, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         zIndex: 1000,
       }}
     >
