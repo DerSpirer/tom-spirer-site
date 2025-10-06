@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
-import { useRef, useEffect } from 'react'
 import type { Message, LeaveMessageParams } from '../../types'
 import MessageBubble from './MessageBubble'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 interface MessageListProps {
   messages: Message[]
@@ -12,12 +12,7 @@ interface MessageListProps {
 }
 
 function MessageList({ messages, hasChatStarted, isLoading, onLeaveMessage, onRejectMessage }: MessageListProps) {
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
+  const isMobile = useIsMobile()
   return (
     <Box
       role="log"
@@ -31,6 +26,7 @@ function MessageList({ messages, hasChatStarted, isLoading, onLeaveMessage, onRe
         flexDirection: 'column',
         gap: 2,
         padding: hasChatStarted ? 3 : 0,
+        paddingBottom: isMobile ? 3 + 4 : 3 + 12,
         opacity: hasChatStarted ? 1 : 0,
         transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), padding 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
         // Firefox scrollbar
@@ -64,7 +60,6 @@ function MessageList({ messages, hasChatStarted, isLoading, onLeaveMessage, onRe
           isStreaming={isLoading}
         />
       ))}
-      <div ref={messagesEndRef} />
     </Box>
   )
 }
