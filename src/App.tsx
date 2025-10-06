@@ -1,141 +1,49 @@
-import { Container, Box, Typography } from '@mui/material'
-import { useState, useCallback } from 'react'
+import { Box } from '@mui/material'
+import { useState, useRef, useCallback } from 'react'
 import ChatWindow from './ChatWindow'
-import PromptSuggestionBubbles from './PromptSuggestionBubbles'
+import Header from './components/layout/Header'
+import SuggestionChips from './components/chat/SuggestionChips'
+import { useIsMobile } from './hooks/useIsMobile'
+import { useChatContext } from './contexts/ChatContext'
 
 function App() {
-  const [suggestionText, setSuggestionText] = useState<string>('')
-  const [hasChatStarted, setHasChatStarted] = useState(false)
-  const [showBubbles, setShowBubbles] = useState(true)
-
-  const handleBubbleClick = useCallback((text: string) => {
-    setSuggestionText(text)
-    setShowBubbles(false)
-  }, [])
-
-  const handleSuggestionUsed = useCallback(() => {
-    setSuggestionText('')
-  }, [])
-
-  const handleChatStart = useCallback(() => {
-    setHasChatStarted(true)
-  }, [])
-
-  const handleInputEmpty = useCallback(() => {
-    setShowBubbles(true)
+  const [inputText, setInputText] = useState('')
+  const inputContainerRef = useRef<HTMLDivElement>(null)
+  const isMobile = useIsMobile()
+  const { hasChatStarted } = useChatContext()
+  
+  const handleChipClick = useCallback((text: string) => {
+    setInputText(text)
   }, [])
 
   return (
-    <Container maxWidth="lg" sx={{ height: '100vh', overflow: 'hidden' }}>
-      <Box 
-        sx={{ 
-          height: '100%',
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: hasChatStarted ? 2 : 4,
-          transition: 'gap 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-          py: 2,
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: hasChatStarted ? 0.5 : 1.5,
-            transition: 'gap 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-            flexShrink: 0,
-          }}
-        >
-          <Typography
-            variant="h2"
-            component="h1"
-            sx={{
-              fontSize: hasChatStarted 
-                ? { xs: '1.75rem', sm: '2rem', md: '2.25rem' }
-                : { xs: '2.5rem', sm: '3rem', md: '3.5rem' },
-              fontWeight: 400,
-              letterSpacing: '-0.02em',
-              color: (theme) => theme.palette.text.primary,
-              textAlign: 'center',
-              opacity: 0,
-              animation: 'fadeInTitle 0.6s ease 0.2s forwards',
-              transition: 'font-size 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-              '@keyframes fadeInTitle': {
-                from: {
-                  opacity: 0,
-                  transform: 'translateY(-10px)',
-                },
-                to: {
-                  opacity: 1,
-                  transform: 'translateY(0)',
-                },
-              },
-            }}
-          >
-            Tom Spirer
-          </Typography>
-          <Typography
-            variant="h6"
-            component="h2"
-            sx={{
-              fontSize: hasChatStarted
-                ? { xs: '0.85rem', sm: '0.9rem', md: '1rem' }
-                : { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
-              fontWeight: 300,
-              letterSpacing: '0.01em',
-              color: (theme) => theme.palette.text.secondary,
-              textAlign: 'center',
-              opacity: 0,
-              animation: 'fadeInSubtitle 0.6s ease 0.4s forwards',
-              transition: 'font-size 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-              '@keyframes fadeInSubtitle': {
-                from: {
-                  opacity: 0,
-                  transform: 'translateY(-10px)',
-                },
-                to: {
-                  opacity: 1,
-                  transform: 'translateY(0)',
-                },
-              },
-            }}
-          >
-            Software Engineer
-          </Typography>
-        </Box>
-        
-        <ChatWindow 
-          suggestionText={suggestionText}
-          onSuggestionUsed={handleSuggestionUsed}
-          onChatStart={handleChatStart}
-          hasChatStarted={hasChatStarted}
-          showBubbles={showBubbles}
-          onInputEmpty={handleInputEmpty}
-          onBubbleClick={handleBubbleClick}
+    <Box
+      sx={{
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 3,
+        p: isMobile && hasChatStarted ? 0 : { xs: 2, sm: 3 },
+        position: 'relative',
+        overflow: 'visible',
+        transition: 'padding 2s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
+    >
+        <Header />
+        <SuggestionChips
+          inputText={inputText}
+          inputContainerRef={inputContainerRef}
+          onChipClick={handleChipClick}
         />
+        <ChatWindow 
+            inputText={inputText}
+            onInputTextChange={setInputText}
+            inputContainerRef={inputContainerRef}
+          />
       </Box>
-      {hasChatStarted && (
-        <Box
-          sx={{
-            animation: 'fadeIn 1s ease 0.9s both',
-            flexShrink: 0,
-            '@keyframes fadeIn': {
-              from: {
-                opacity: 0,
-              },
-              to: {
-                opacity: 1,
-              },
-            },
-          }}
-        >
-          <PromptSuggestionBubbles onBubbleClick={handleBubbleClick} showBubbles={showBubbles} />
-        </Box>
-      )}
-    </Container>
   )
 }
 

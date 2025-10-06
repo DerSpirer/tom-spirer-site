@@ -1,6 +1,8 @@
 import { IconButton, Tooltip } from '@mui/material'
+import type { SxProps, Theme } from '@mui/material'
 import type { ReactNode } from 'react'
-import { FAB } from '../../constants'
+import { useIsMobile } from '../hooks/useIsMobile'
+import { FAB } from '../constants'
 
 export type FabPosition = 'primary' | 'secondary'
 
@@ -8,11 +10,12 @@ interface FloatingActionButtonProps {
   children: ReactNode
   tooltip: string
   onClick: (event: React.MouseEvent<HTMLElement>) => void
-  fabPosition?: FabPosition
   ariaLabel: string
+  position?: FabPosition
   ariaControls?: string
   ariaHaspopup?: boolean
   ariaExpanded?: boolean
+  sx?: SxProps<Theme>
 }
 
 /**
@@ -23,11 +26,28 @@ function FloatingActionButton({
   tooltip,
   onClick,
   ariaLabel,
-  fabPosition,
+  position = 'primary',
   ariaControls,
   ariaHaspopup,
   ariaExpanded,
+  sx = {},
 }: FloatingActionButtonProps) {
+  const isMobile = useIsMobile()
+  
+  // Calculate position based on primary/secondary FAB
+  const getPositioning = () => {
+    if (isMobile) {
+      return {
+        left: position === 'primary' ? FAB.MARGIN : FAB.MARGIN + FAB.SIZE + FAB.SPACING,
+        right: 'auto',
+      }
+    }
+    return {
+      right: position === 'primary' ? FAB.MARGIN : FAB.MARGIN + FAB.SIZE + FAB.SPACING,
+      left: 'auto',
+    }
+  }
+
   return (
     <Tooltip title={tooltip} placement={'right'}>
       <IconButton
@@ -39,7 +59,7 @@ function FloatingActionButton({
         sx={{
           position: 'fixed',
           top: FAB.MARGIN,
-          left: fabPosition === 'primary' ? FAB.MARGIN : FAB.MARGIN + FAB.SIZE + FAB.SPACING,
+          ...getPositioning(),
           zIndex: 1000,
           backgroundColor: (theme) => theme.customColors.overlays.paper,
           border: (theme) => `1px solid ${theme.customColors.borders.light}`,
@@ -53,6 +73,7 @@ function FloatingActionButton({
               : '0 6px 30px rgba(0, 0, 0, 0.30), 0 4px 16px rgba(0, 0, 0, 0.20)',
             transform: 'scale(1.05)',
           },
+          ...sx,
         }}
       >
         {children}

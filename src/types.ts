@@ -38,12 +38,3 @@ export interface Message {
   toolCalls?: ToolCall[]
   toolCallId?: string
 }
-
-export interface BubbleConfig {
-  id: number
-  text: string
-  basePosition: {
-    x: number
-    y: number
-  }
-}

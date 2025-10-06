@@ -23,23 +23,24 @@ declare module '@mui/material/styles' {
         white05: string
         white10: string
         white12: string
-        white15: string
-        white20: string
         white25: string
         white30: string
         white85: string
-        black30: string
-        black40: string
       }
       borders: {
-        subtle: string
         light: string
-        medium: string
+        glow: string
       }
       components: {
-        suggestionBubble: string
-        suggestionBubbleHover: string
+        suggestionChip: string
+        suggestionChipHover: string
         agentMessage: string
+      }
+      shadows: {
+        standard: string
+        chatWindow: string
+        suggestionChip: string
+        suggestionChipHover: string
       }
     }
   }
@@ -64,23 +65,24 @@ declare module '@mui/material/styles' {
         white05?: string
         white10?: string
         white12?: string
-        white15?: string
-        white20?: string
         white25?: string
         white30?: string
         white85?: string
-        black30?: string
-        black40?: string
       }
       borders?: {
-        subtle?: string
         light?: string
-        medium?: string
+        glow?: string
       }
       components?: {
-        suggestionBubble?: string
-        suggestionBubbleHover?: string
+        suggestionChip?: string
+        suggestionChipHover?: string
         agentMessage?: string
+      }
+      shadows?: {
+        standard?: string
+        chatWindow?: string
+        suggestionChip?: string
+        suggestionChipHover?: string
       }
     }
   }
@@ -93,10 +95,19 @@ export const createAppTheme = (mode: PaletteMode) => {
     palette: {
       mode,
       primary: {
-        main: isDark ? '#4a9eff' : '#5b8ee0',
+        main: isDark ? '#2b7de9' : '#7ba8e6',
       },
       secondary: {
         main: isDark ? '#dc004e' : '#db2777',
+      },
+      success: {
+        main: isDark ? '#22c55e' : '#81c995',
+      },
+      error: {
+        main: isDark ? '#dc2626' : '#e88b8b',
+      },
+      warning: {
+        main: isDark ? '#f59e0b' : '#f5c563',
       },
       background: {
         default: isDark ? '#0f0e1a' : '#f8f9fb',
@@ -145,44 +156,45 @@ export const createAppTheme = (mode: PaletteMode) => {
         white05: 'rgba(255, 255, 255, 0.05)',
         white10: 'rgba(255, 255, 255, 0.1)',
         white12: 'rgba(255, 255, 255, 0.12)',
-        white15: 'rgba(255, 255, 255, 0.15)',
-        white20: 'rgba(255, 255, 255, 0.2)',
         white25: 'rgba(255, 255, 255, 0.25)',
         white30: 'rgba(255, 255, 255, 0.3)',
         white85: 'rgba(255, 255, 255, 0.85)',
-        black30: 'rgba(0, 0, 0, 0.3)',
-        black40: 'rgba(0, 0, 0, 0.4)',
       } : {
         paper: 'rgba(252, 251, 250, 0.85)',
         paperDark: 'rgba(252, 251, 250, 0.95)',
         white05: 'rgba(0, 0, 0, 0.04)',
         white10: 'rgba(0, 0, 0, 0.05)',
         white12: 'rgba(0, 0, 0, 0.06)',
-        white15: 'rgba(0, 0, 0, 0.08)',
-        white20: 'rgba(0, 0, 0, 0.1)',
         white25: 'rgba(0, 0, 0, 0.12)',
         white30: 'rgba(0, 0, 0, 0.15)',
         white85: 'rgba(0, 0, 0, 0.85)',
-        black30: 'rgba(255, 255, 255, 0.5)',
-        black40: 'rgba(255, 255, 255, 0.65)',
       },
-      borders: isDark ? {
-        subtle: 'rgba(255, 255, 255, 0.1)',
-        light: 'rgba(255, 255, 255, 0.15)',
-        medium: 'rgba(255, 255, 255, 0.2)',
-      } : {
-        subtle: 'rgba(0, 0, 0, 0.08)',
-        light: 'rgba(0, 0, 0, 0.12)',
-        medium: 'rgba(0, 0, 0, 0.16)',
+      borders: {
+        light: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.12)',
+        glow: `rgba(${isDark ? '167, 139, 250' : '147, 51, 234'}, 0.2)`,
       },
       components: isDark ? {
-        suggestionBubble: 'rgba(26, 24, 37, 0.7)',
-        suggestionBubbleHover: 'rgba(26, 24, 37, 0.85)',
+        suggestionChip: 'rgba(26, 24, 37, 0.7)',
+        suggestionChipHover: 'rgba(26, 24, 37, 0.85)',
         agentMessage: 'rgba(255, 255, 255, 0.08)',
       } : {
-        suggestionBubble: '#f8f9fb',
-        suggestionBubbleHover: '#f8f9fb',
+        suggestionChip: '#f8f9fb',
+        suggestionChipHover: '#f8f9fb',
         agentMessage: 'rgba(147, 51, 234, 0.06)',
+      },
+      shadows: {
+        standard: isDark 
+          ? '0 4px 16px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)'
+          : '0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+        chatWindow: isDark
+          ? '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.1)'
+          : '0 8px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)',
+        suggestionChip: isDark
+          ? '0 4px 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.1)'
+          : '0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+        suggestionChipHover: isDark
+          ? '0 0 40px rgba(255, 255, 255, 0.15), 0 0 60px rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.4)'
+          : '0 8px 32px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
       },
     },
   })

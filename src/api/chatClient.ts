@@ -1,23 +1,9 @@
 import axios, { type AxiosInstance } from 'axios'
 import { API } from '../constants'
-
-export const Role = {
-  System: 'system',
-  User: 'user',
-  Assistant: 'assistant',
-  Tool: 'tool',
-  Developer: 'developer',
-} as const
-
-export type RoleType = (typeof Role)[keyof typeof Role]
-
-export interface ApiMessage {
-  role: RoleType
-  content: string
-}
+import type { Message } from '../types'
 
 export interface GenerateResponseRequest {
-  messages: ApiMessage[]
+  messages: Message[]
 }
 
 export class ChatApiClient {
@@ -35,12 +21,12 @@ export class ChatApiClient {
   /**
    * Generates a response from the chat API using Server-Sent Events
    * @param messages - Array of messages in the conversation
-   * @param onChunk - Callback function called for each chunk of text received
+   * @param onChunk - Callback function called for each chunk received
    * @returns Promise that resolves when streaming is complete
    */
   async generateResponseStream(
-    messages: ApiMessage[],
-    onChunk: (chunk: string) => void
+    messages: Message[],
+    onChunk: (chunk: Message) => void
   ): Promise<void> {
     const request: GenerateResponseRequest = {
       messages,
@@ -76,9 +62,10 @@ export class ChatApiClient {
                 const data = line.slice(6) // Remove 'data: ' prefix
                 if (data) {
                   try {
-                    const parsed = JSON.parse(data)
-                    if (parsed.delta) {
-                      onChunk(parsed.delta)
+                    const chunk = JSON.parse(data) as Message
+                    // Only send non-empty chunks
+                    if (Object.keys(chunk).length > 0) {
+                      onChunk(chunk)
                     }
                   } catch (e) {
                     console.error('Failed to parse SSE data as JSON:', data, e)
@@ -96,9 +83,10 @@ export class ChatApiClient {
           const data = buffer.slice(6)
           if (data) {
             try {
-              const parsed = JSON.parse(data)
-              if (parsed.delta) {
-                onChunk(parsed.delta)
+              const chunk = JSON.parse(data) as Message
+              // Only send non-empty chunks
+              if (Object.keys(chunk).length > 0) {
+                onChunk(chunk)
               }
             } catch (e) {
               console.error('Failed to parse SSE data as JSON:', data, e)
@@ -110,6 +98,20 @@ export class ChatApiClient {
       console.error('Error generating response:', error)
       throw error
     }
+  }
+
+  /**
+   * Leaves a message for Tom (contact form submission)
+   * @param params - Message parameters
+   * @returns Promise that resolves when message is sent
+   */
+  async leaveMessage(params: {
+    fromName: string
+    fromEmail: string
+    subject: string
+    body: string
+  }): Promise<void> {
+    await this.axiosInstance.post(API.ENDPOINTS.LEAVE_MESSAGE, params)
   }
 }
 

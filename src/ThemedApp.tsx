@@ -6,6 +6,7 @@ import App from './App'
 import { createAppTheme } from './theme'
 import ThemeToggle from './components/layout/ThemeToggle'
 import GithubMenu from './components/layout/GithubMenu'
+import { ChatProvider } from './contexts/ChatContext'
 
 const THEME_STORAGE_KEY = 'app-theme-mode'
 
@@ -68,9 +69,11 @@ function ThemedApp() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <GithubMenu />
-      <ThemeToggle onToggle={toggleTheme} />
-      <App />
+      <ChatProvider>
+        <GithubMenu />
+        <ThemeToggle onToggle={toggleTheme} />
+        <App />
+      </ChatProvider>
     </ThemeProvider>
   )
 }

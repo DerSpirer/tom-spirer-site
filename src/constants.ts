@@ -5,20 +5,6 @@ export const CHAT_WINDOW = {
   INPUT_HEIGHT: '90px',
 } as const;
 
-export const BUBBLE = {
-  WIDTH: 240,
-  POSITIONS: {
-    LEFT_NEAR: -400,
-    LEFT_FAR: -420,
-    RIGHT_NEAR: 400,
-    RIGHT_FAR: 420,
-  },
-} as const;
-
-export const BREAKPOINTS = {
-  HIDE_BUBBLES: 1200,
-} as const
-
 export const FAB = {
   MARGIN: 16,
   SIZE: 40,
