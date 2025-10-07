@@ -25,11 +25,11 @@ function App() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 3,
+        gap: isMobile && hasChatStarted ? 0 : 3,
         p: isMobile && hasChatStarted ? 0 : { xs: 2, sm: 3 },
         position: 'relative',
         overflow: 'visible',
-        transition: 'padding 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'all 0.6s ease-in-out',
       }}
     >
         <Header />

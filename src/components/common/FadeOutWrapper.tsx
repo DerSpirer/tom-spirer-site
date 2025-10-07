@@ -6,19 +6,22 @@ interface FadeOutWrapperProps {
   shouldFadeOut: boolean
   duration?: number // in milliseconds
   onFadeComplete?: () => void
+  marginBottom?: number // MUI spacing units (will be multiplied by 8px)
 }
 
 function FadeOutWrapper({ 
   children, 
   shouldFadeOut, 
   duration = 600,
-  onFadeComplete 
+  onFadeComplete,
+  marginBottom = 0
 }: FadeOutWrapperProps) {
   const [isVisible, setIsVisible] = useState(true)
   const [shouldRender, setShouldRender] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState<number | 'auto'>('auto')
   const [scale, setScale] = useState(1)
+  const [currentMarginBottom, setCurrentMarginBottom] = useState(marginBottom)
 
   useEffect(() => {
     if (shouldFadeOut) {
@@ -32,6 +35,7 @@ function FadeOutWrapper({
           setHeight(0)
           setScale(0)
           setIsVisible(false)
+          setCurrentMarginBottom(0)
         })
       }
       
@@ -48,8 +52,9 @@ function FadeOutWrapper({
       setIsVisible(true)
       setHeight('auto')
       setScale(1)
+      setCurrentMarginBottom(marginBottom)
     }
-  }, [shouldFadeOut, duration, onFadeComplete])
+  }, [shouldFadeOut, duration, onFadeComplete, marginBottom])
 
   if (!shouldRender) {
     return null
@@ -61,6 +66,7 @@ function FadeOutWrapper({
       sx={{
         opacity: isVisible ? 1 : 0,
         height: height,
+        mb: currentMarginBottom,
         transition: `all ${duration}ms ease-in-out`,
         transform: `scale(${scale})`,
         transformOrigin: 'center top',

@@ -8,7 +8,11 @@ function Header() {
   const isMobile = useIsMobile()
 
   return (
-    <FadeOutWrapper shouldFadeOut={isMobile && hasChatStarted} duration={600}>
+    <FadeOutWrapper 
+      shouldFadeOut={isMobile && hasChatStarted} 
+      duration={600}
+      marginBottom={isMobile ? 6 : (!hasChatStarted ? 12 : 0)}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -16,7 +20,6 @@ function Header() {
           alignItems: 'center',
           gap: hasChatStarted ? 0.5 : 1.5,
           transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          mb: isMobile ? 6 : (!hasChatStarted ? 12 : 0),
         }}
       >
         <Typography
