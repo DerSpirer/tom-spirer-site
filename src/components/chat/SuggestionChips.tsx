@@ -100,13 +100,12 @@ function SuggestionChips({ inputText, inputContainerRef, onChipClick }: Suggesti
             border: `1px solid ${theme.customColors.borders.light}`,
             fontSize: '0.85rem',
             flexShrink: 0,
-            boxShadow: theme.customColors.shadows.suggestionChip,
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: theme.palette.mode === 'dark' ? theme.customColors.shadows.suggestionChip : 'none',
+            transition: 'background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
             '&:hover': {
               backgroundColor: theme.customColors.components.suggestionChipHover,
               border: `1px solid ${theme.customColors.borders.glow}`,
-              boxShadow: theme.customColors.shadows.suggestionChipHover,
-              transform: 'translateY(-2px)',
+              opacity: 0.9,
             },
           }}
         />
